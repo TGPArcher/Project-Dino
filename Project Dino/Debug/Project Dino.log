@@ -1,0 +1,9 @@
+﻿  Main.c
+c:\users\tgp\documents\visual studio 2015\projects\project dino\project dino\main.c(38): warning C4047: 'function': 'square *' differs in levels of indirection from 'square (*)[25][100]'
+c:\users\tgp\documents\visual studio 2015\projects\project dino\project dino\main.c(38): warning C4024: 'initialize_the_game_rect': different types for formal and actual parameter 1
+c:\users\tgp\documents\visual studio 2015\projects\project dino\project dino\main.c(39): warning C4047: 'function': 'square *' differs in levels of indirection from 'square (*)[25][100]'
+c:\users\tgp\documents\visual studio 2015\projects\project dino\project dino\main.c(39): warning C4024: 'initialize_the_game_object': different types for formal and actual parameter 1
+c:\users\tgp\documents\visual studio 2015\projects\project dino\project dino\main.c(43): warning C4028: formal parameter 1 different from declaration
+c:\users\tgp\documents\visual studio 2015\projects\project dino\project dino\main.c(52): warning C4028: formal parameter 1 different from declaration
+  Project Dino.vcxproj -> C:\Users\TGP\documents\visual studio 2015\Projects\Project Dino\Debug\Project Dino.exe
+  Project Dino.vcxproj -> C:\Users\TGP\documents\visual studio 2015\Projects\Project Dino\Debug\Project Dino.pdb (Full PDB)
