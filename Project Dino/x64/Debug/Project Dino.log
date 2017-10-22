@@ -1,6 +1,3 @@
 ﻿  Main.c
-c:\users\tgp\documents\github\project-dino\project dino\main.c(23): warning C4047: 'function': 'char (*)[6]' differs in levels of indirection from 'char [26]'
-c:\users\tgp\documents\github\project-dino\project dino\main.c(23): warning C4024: 'obj_init': different types for formal and actual parameter 4
-c:\users\tgp\documents\github\project-dino\project dino\main.c(29): warning C4028: formal parameter 4 different from declaration
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)
