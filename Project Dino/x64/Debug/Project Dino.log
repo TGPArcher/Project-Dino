@@ -1,3 +1,4 @@
 ﻿  Main.c
-  Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
-  Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)
+c:\users\tgp\documents\github\project-dino\project dino\main.c(34): warning C4013: 'clrscr' undefined; assuming extern returning int
+Main.obj : error LNK2019: unresolved external symbol clrscr referenced in function main
+C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe : fatal error LNK1120: 1 unresolved externals

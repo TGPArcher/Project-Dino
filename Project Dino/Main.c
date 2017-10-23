@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <Windows.h>
+#include <conio.h>
 
 typedef char sprites[10][10];
 
@@ -20,21 +21,37 @@ void main() {
 	x = 0; y = 0;
 	set_console_pos(x, y);
 
+	// make another function to initialize all game objects with a simple call
 	object cactus = obj_init(90, 20, 2, " ### ##### ### ##### ### ", 5, 5);
 	object player = obj_init(5, 20, 1, "     ##  #   ########## #######  #   #  ", 8, 5);
 
+	// make another function to handle easier the drawing of all game objects
+	// also an game object array will be handy here
 	draw_the_object(cactus);
 	draw_the_object(player);
 
-	// To be removed
-	// Testing the movement, looks good, needs work, also don't forget about game loop
-	for (int i = 0; i < 100; i++) {
-		getchar();
+	int alive = 1;
+	while (alive) {
+		Sleep(200);
 		system("cls");
 
-		player.x++;
+		// implement an movement function for the enviroment
+		cactus.x--;
+		if (cactus.x >= 0) {
+			draw_the_object(cactus);
+		}
+
 		draw_the_object(player);
-		draw_the_object(cactus);
+
+		// inplement an movement for the player and when the key will be pressed the player will jump
+		// also do not forgot about gravity, the player should fall after he jumps
+		if (_kbhit()) {
+			char _input = _getch();
+
+			if (_input == ' ') {
+				alive = 0;
+			}
+		}
 	}
 }
 
@@ -75,8 +92,16 @@ void draw_the_object(object _go) {
 		set_console_pos(_go.x, _go.y + i);
 
 		for (int j = 0; j < _go._lx; j++) {
-			printf("%c", _go.sprite[i][j]);
+
+			if (_go.sprite[i][j] != ' ') {
+				printf("%c", _go.sprite[i][j]);
+				x++;
+			}
+			else {
+				set_console_pos(x+1, y);
+			}
 		}
+
 	}
 
 	set_console_pos(0, 30); //y++;
