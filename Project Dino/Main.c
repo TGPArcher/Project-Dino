@@ -13,8 +13,9 @@ typedef struct object {
 object obj_init(int, int, int, char[], int, int);
 void set_console_pos(int, int);
 void draw_the_object(object);
+void draw_the_canvas();
 
-int x, y;
+int x, y, scor = 0;
 
 void main() {
 
@@ -27,8 +28,8 @@ void main() {
 
 	// make another function to handle easier the drawing of all game objects
 	// also an game object array will be handy here
-	draw_the_object(cactus);
-	draw_the_object(player);
+	/*draw_the_object(cactus);
+	draw_the_object(player);*/
 
 	int alive = 1;
 	while (alive) {
@@ -40,8 +41,10 @@ void main() {
 		if (cactus.x >= 0) {
 			draw_the_object(cactus);
 		}
-
 		draw_the_object(player);
+
+		// if you can please optimize the canvas drawing function, it will help you a lot.
+		draw_the_canvas();
 
 		// inplement an movement for the player and when the key will be pressed the player will jump
 		// also do not forgot about gravity, the player should fall after he jumps
@@ -104,5 +107,35 @@ void draw_the_object(object _go) {
 
 	}
 
-	set_console_pos(0, 30); //y++;
+	set_console_pos(0, 30);
+}
+
+void draw_the_canvas() {
+
+	for (int i = 2; i < 98; i++) {
+		set_console_pos(i, 1);
+		printf("-");
+
+		set_console_pos(i, 25);
+		printf("-");
+	}
+
+	for (int i = 1; i <= 25; i++) {
+		set_console_pos(0, i);
+		printf("||");
+
+		set_console_pos(98, i);
+		printf("||");
+	}
+
+	set_console_pos(41, 3);
+	printf("----------------");
+	set_console_pos(41, 4);
+	printf("|  Scor: %d", scor);
+	set_console_pos(56, 4);
+	printf("|");
+	set_console_pos(41, 5);
+	printf("----------------");
+
+	set_console_pos(0, 30);
 }
