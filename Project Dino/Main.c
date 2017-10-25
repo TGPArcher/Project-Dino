@@ -31,10 +31,16 @@ void main() {
 	/*draw_the_object(cactus);
 	draw_the_object(player);*/
 
+	// player functionality
+	int jumped = 0;
+	int how_many = 0;
+	//
+
 	int alive = 1;
 	while (alive) {
-		Sleep(200);
+		Sleep(100);
 		system("cls");
+		scor++;
 
 		// implement an movement function for the enviroment
 		cactus.x--;
@@ -46,13 +52,40 @@ void main() {
 		// if you can please optimize the canvas drawing function, it will help you a lot.
 		draw_the_canvas();
 
+		if (jumped > 0) {
+			if (how_many == 0) {
+				player.y--;
+				jumped--;
+				how_many = 1;
+			}
+			else {
+				how_many--;
+			}
+		}
+		else {
+			if (player.y < 20) {
+				if (how_many == 0) {
+					player.y++;
+					how_many = 1;
+				}
+				else {
+					how_many--;
+				}
+			}
+		}
 		// inplement an movement for the player and when the key will be pressed the player will jump
 		// also do not forgot about gravity, the player should fall after he jumps
 		if (_kbhit()) {
 			char _input = _getch();
 
-			if (_input == ' ') {
+			if (_input == 's') {
 				alive = 0;
+			}
+			if (_input == ' ') {
+				if (jumped == 0) {
+					jumped = 9;
+					how_many = 0;
+				}
 			}
 		}
 	}
