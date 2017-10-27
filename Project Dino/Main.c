@@ -1,19 +1,27 @@
 #include <stdio.h>
 #include <Windows.h>
+#include <string.h>
 #include <conio.h>
 
-typedef char sprites[10][10];
+// Structure for textures in a simple format
+typedef struct raw_sprites {
+	char str[150];
+	int x, y;
+}raw_sprites;
 
+// Game Object's structure (owner, coord, sprite, spr_coord)
 typedef struct object {
 	int owner;
-	int x, y, _lx, _ly;
-	sprites sprite;
+	int x, y;
+	char sprite[10][15];
+	int sx, sy;
 }object;
 
 object obj_init(int, int, int, char[], int, int);
 void set_console_pos(int, int);
 void draw_the_object(object);
 void draw_the_canvas();
+raw_sprites * set_sprites();
 
 int x, y, scor = 0;
 
@@ -22,6 +30,9 @@ void main() {
 	x = 0; y = 0;
 	set_console_pos(x, y);
 
+	raw_sprites *go_sprites = set_sprites;
+
+	object go[3];
 	// make another function to initialize all game objects with a simple call
 	object cactus = obj_init(90, 20, 2, " ### ##### ### ##### ### ", 5, 5);
 	object player = obj_init(5, 20, 1, "     ##  #   ########## #######  #   #  ", 8, 5);
@@ -91,6 +102,32 @@ void main() {
 	}
 }
 
+// Load textures when the game starts
+raw_sprites * set_sprites() {
+	static raw_sprites go_sprites[3];
+
+	strcpy_s(go_sprites[0].str, 150, " ### ##### ### ##### ### ");
+	//go_sprites[0].str = " ### ##### ### ##### ### ";
+	go_sprites[0].x = 5;
+	go_sprites[0].y = 5;
+
+	strcpy_s(go_sprites[1].str, 150, " ## #### ## ");
+	//go_sprites[1].str = " ## #### ## ";
+	go_sprites[1].x = 4;
+	go_sprites[1].y = 3;
+
+	strcpy_s(go_sprites[2].str, 150, "      ### ##### ##   ### #### ##### ##   ### ");
+	//go_sprites[2].str = "      ### ##### ##   ### #### ##### ##   ### ";
+	go_sprites[2].x = 10;
+	go_sprites[2].y = 5;
+
+	return &go_sprites;
+}
+
+void object_handler() {
+
+}
+
 // make a bigger _sprite array and add size parameters - done
 // or better try to find a way how to pass the array without doing any costly loop - still having to think about it
 object obj_init(int _x, int _y, int _owner, char _sprite[], int _sizeX, int _sizeY) {
@@ -98,8 +135,8 @@ object obj_init(int _x, int _y, int _owner, char _sprite[], int _sizeX, int _siz
 
 	_obj.x = _x;
 	_obj.y = _y;
-	_obj._lx = _sizeX;
-	_obj._ly = _sizeY;
+	_obj.sx = _sizeX;
+	_obj.sy = _sizeY;
 	_obj.owner = _owner;
 
 	for (int i = 0; i < _sizeY; i++) {
@@ -124,10 +161,10 @@ void set_console_pos(int _x, int _y) {
 
 void draw_the_object(object _go) {
 
-	for (int i = 0; i < _go._ly; i++) {
+	for (int i = 0; i < _go.sy; i++) {
 		set_console_pos(_go.x, _go.y + i);
 
-		for (int j = 0; j < _go._lx; j++) {
+		for (int j = 0; j < _go.sx; j++) {
 
 			if (_go.sprite[i][j] != ' ') {
 				printf("%c", _go.sprite[i][j]);

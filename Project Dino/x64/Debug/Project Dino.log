@@ -1,3 +1,6 @@
 ﻿  Main.c
+c:\users\tgp\documents\github\project-dino\project dino\main.c(33): warning C4047: 'initializing': 'raw_sprites *' differs in levels of indirection from 'raw_sprites *(__cdecl *)()'
+c:\users\tgp\documents\github\project-dino\project dino\main.c(35): warning C4101: 'go': unreferenced local variable
+c:\users\tgp\documents\github\project-dino\project dino\main.c(124): warning C4047: 'return': 'raw_sprites *' differs in levels of indirection from 'raw_sprites (*)[3]'
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)
