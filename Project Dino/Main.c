@@ -21,7 +21,10 @@ object obj_init(int, int, int, char[], int, int);
 void set_console_pos(int, int);
 void draw_the_object(object);
 void draw_the_canvas();
-raw_sprites * set_sprites();
+void set_sprites(raw_sprites *);
+int get_random();
+void first_init_objects(object *, raw_sprites[]);
+void object_handler(object *);
 
 int x, y, scor = 0;
 
@@ -30,38 +33,34 @@ void main() {
 	x = 0; y = 0;
 	set_console_pos(x, y);
 
-	raw_sprites *go_sprites = set_sprites;
+	raw_sprites go_sprites[3];
+	set_sprites(&go_sprites);
 
 	object go[3];
-	// make another function to initialize all game objects with a simple call
-	object cactus = obj_init(90, 20, 2, " ### ##### ### ##### ### ", 5, 5);
-	object player = obj_init(5, 20, 1, "     ##  #   ########## #######  #   #  ", 8, 5);
+	first_init_objects(&go, go_sprites);
 
-	// make another function to handle easier the drawing of all game objects
-	// also an game object array will be handy here
-	/*draw_the_object(cactus);
-	draw_the_object(player);*/
+	object player = obj_init(5, 20, 1, "     ##  #   ########## #######  #   #  ", 8, 5);
 
 	// player functionality
 	int jumped = 0;
 	int how_many = 0;
 	//
 
+	// For stoping the game
 	int alive = 1;
+
 	while (alive) {
 		Sleep(100);
 		system("cls");
 		scor++;
 
 		// implement an movement function for the enviroment
-		cactus.x--;
-		if (cactus.x >= 0) {
-			draw_the_object(cactus);
-		}
 		draw_the_object(player);
 
 		// if you can please optimize the canvas drawing function, it will help you a lot.
 		draw_the_canvas();
+
+		object_handler(&go);
 
 		if (jumped > 0) {
 			if (how_many == 0) {
@@ -84,8 +83,8 @@ void main() {
 				}
 			}
 		}
-		// inplement an movement for the player and when the key will be pressed the player will jump
-		// also do not forgot about gravity, the player should fall after he jumps
+		// inplement an movement for the player and when the key will be pressed the player will jump - done
+		// also do not forgot about gravity, the player should fall after he jumps - done
 		if (_kbhit()) {
 			char _input = _getch();
 
@@ -103,29 +102,60 @@ void main() {
 }
 
 // Load textures when the game starts
-raw_sprites * set_sprites() {
-	static raw_sprites go_sprites[3];
+void set_sprites(raw_sprites * go_sprites) {
+	//static raw_sprites go_sprites[3];
 
-	strcpy_s(go_sprites[0].str, 150, " ### ##### ### ##### ### ");
-	//go_sprites[0].str = " ### ##### ### ##### ### ";
-	go_sprites[0].x = 5;
-	go_sprites[0].y = 5;
+	strcpy_s(go_sprites->str, 150, " ### ##### ### ##### ### ");
+	go_sprites->x = 5;
+	go_sprites->y = 5;
 
-	strcpy_s(go_sprites[1].str, 150, " ## #### ## ");
-	//go_sprites[1].str = " ## #### ## ";
-	go_sprites[1].x = 4;
-	go_sprites[1].y = 3;
+	go_sprites++;
+	strcpy_s(go_sprites->str, 150, " ## #### ## ");
+	go_sprites->x = 4;
+	go_sprites->y = 3;
 
-	strcpy_s(go_sprites[2].str, 150, "      ### ##### ##   ### #### ##### ##   ### ");
-	//go_sprites[2].str = "      ### ##### ##   ### #### ##### ##   ### ";
-	go_sprites[2].x = 10;
-	go_sprites[2].y = 5;
-
-	return &go_sprites;
+	go_sprites++;
+	strcpy_s(go_sprites->str, 150, "      ### ##### ##   ### #### ##### ##   ### ");
+	go_sprites->x = 10;
+	go_sprites->y = 5;
 }
 
-void object_handler() {
+// Get a "random" number
+// Made for selecting random texture for enviroment
+int get_random() {
+	int _res;
 
+	if (scor % 2 == 0) {
+		_res = 0;
+	}
+	else if (scor % 3 == 0) {
+		_res = 1;
+	}
+	else {
+		_res = 2;
+	}
+}
+
+// First initialization of game objects
+// (they can't be firstly initialized by the handler
+void first_init_objects(object * _go, raw_sprites go_sprites[]) {
+	for (int i = 0; i < 3; i++) {
+		int _rand = get_random();
+
+		*(_go + i) = obj_init(45 * (i + 2), 20, 2, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+	}
+}
+
+void object_handler(object * _go) {
+	for (int i = 0; i < 3; i++) {
+
+		if (_go->x > 2 && _go->x < 92) {
+			draw_the_object(*_go);
+		}
+
+		_go->x--;
+		*_go++;
+	}
 }
 
 // make a bigger _sprite array and add size parameters - done
@@ -149,6 +179,7 @@ object obj_init(int _x, int _y, int _owner, char _sprite[], int _sizeX, int _siz
 
 }
 
+// Sets the console cursor to (X,Y)
 void set_console_pos(int _x, int _y) {
 	HANDLE cons_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD cons_coord;
@@ -159,6 +190,7 @@ void set_console_pos(int _x, int _y) {
 	SetConsoleCursorPosition(cons_handle, cons_coord);
 }
 
+// Draws the object _go to console
 void draw_the_object(object _go) {
 
 	for (int i = 0; i < _go.sy; i++) {
@@ -180,6 +212,7 @@ void draw_the_object(object _go) {
 	set_console_pos(0, 30);
 }
 
+// Draws a canvas for the game
 void draw_the_canvas() {
 
 	for (int i = 2; i < 98; i++) {
