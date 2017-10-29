@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string.h>
 #include <conio.h>
+#include <stdlib.h>
 
 // Structure for textures in a simple format
 typedef struct raw_sprites {
@@ -23,15 +24,15 @@ void draw_the_object(object);
 void draw_the_canvas();
 void set_sprites(raw_sprites *);
 int get_random();
+void player_handler(int *, int *, int *, int *);
 void first_init_objects(object *, raw_sprites[]);
-void object_handler(object *);
+void object_handler(object *, raw_sprites[]);
 
 int x, y, scor = 0;
 
 void main() {
 
-	x = 0; y = 0;
-	set_console_pos(x, y);
+	set_console_pos(0, 0);
 
 	raw_sprites go_sprites[3];
 	set_sprites(&go_sprites);
@@ -39,65 +40,27 @@ void main() {
 	object go[3];
 	first_init_objects(&go, go_sprites);
 
-	object player = obj_init(5, 20, 1, "     ##  #   ########## #######  #   #  ", 8, 5);
+	object player = obj_init(15, 20, 1, "     ##  #   ########## #######  #   #  ", 8, 5);
 
 	// player functionality
 	int jumped = 0;
 	int how_many = 0;
-	//
 
 	// For stoping the game
 	int alive = 1;
 
 	while (alive) {
-		Sleep(100);
-		system("cls");
-		scor++;
-
-		// implement an movement function for the enviroment
 		draw_the_object(player);
 
-		// if you can please optimize the canvas drawing function, it will help you a lot.
 		draw_the_canvas();
 
-		object_handler(&go);
+		object_handler(&go, go_sprites);
 
-		if (jumped > 0) {
-			if (how_many == 0) {
-				player.y--;
-				jumped--;
-				how_many = 1;
-			}
-			else {
-				how_many--;
-			}
-		}
-		else {
-			if (player.y < 20) {
-				if (how_many == 0) {
-					player.y++;
-					how_many = 1;
-				}
-				else {
-					how_many--;
-				}
-			}
-		}
-		// inplement an movement for the player and when the key will be pressed the player will jump - done
-		// also do not forgot about gravity, the player should fall after he jumps - done
-		if (_kbhit()) {
-			char _input = _getch();
+		player_handler(&jumped, &how_many, &player.y, &alive);
 
-			if (_input == 's') {
-				alive = 0;
-			}
-			if (_input == ' ') {
-				if (jumped == 0) {
-					jumped = 9;
-					how_many = 0;
-				}
-			}
-		}
+		Sleep(50);
+		system("cls");
+		scor++;
 	}
 }
 
@@ -115,7 +78,7 @@ void set_sprites(raw_sprites * go_sprites) {
 	go_sprites->y = 3;
 
 	go_sprites++;
-	strcpy_s(go_sprites->str, 150, "      ### ##### ##   ### #### ##### ##   ### ");
+	strcpy_s(go_sprites->str, 150, "      ###      ##### ##   ### #### ##### ##   ### ");
 	go_sprites->x = 10;
 	go_sprites->y = 5;
 }
@@ -123,16 +86,47 @@ void set_sprites(raw_sprites * go_sprites) {
 // Get a "random" number
 // Made for selecting random texture for enviroment
 int get_random() {
-	int _res;
+	int _res = rand() % 3;
 
-	if (scor % 2 == 0) {
-		_res = 0;
-	}
-	else if (scor % 3 == 0) {
-		_res = 1;
+	return _res;
+}
+
+// handles player behavior on keyboard input
+void player_handler(int * _jump, int * _hm, int * _y, int * _alive) {
+	if (*_jump > 0) {
+		if (*_hm == 0) {
+			*_y = *_y - 1;
+			*_jump = *_jump - 1;
+			*_hm = 1;
+		}
+		else {
+			*_hm = *_hm - 1;
+		}
 	}
 	else {
-		_res = 2;
+		if (*_y < 20) {
+			if (*_hm == 0) {
+				*_y = *_y + 1;
+				*_hm = 1;
+			}
+			else {
+				*_hm = *_hm - 1;
+			}
+		}
+	}
+
+	if (_kbhit()) {
+		char _input = _getch();
+
+		if (_input == 's') {
+			*_alive = 0;
+		}
+		if (_input == ' ') {
+			if (*_jump == 0) {
+				*_jump = 9;
+				*_hm = 0;
+			}
+		}
 	}
 }
 
@@ -142,15 +136,24 @@ void first_init_objects(object * _go, raw_sprites go_sprites[]) {
 	for (int i = 0; i < 3; i++) {
 		int _rand = get_random();
 
-		*(_go + i) = obj_init(45 * (i + 2), 20, 2, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+		*(_go + i) = obj_init(45 * (i + 2), 25 - go_sprites[_rand].y, 2, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
 	}
 }
 
-void object_handler(object * _go) {
+// object handler
+// handles object behavior and reinitialization
+void object_handler(object * _go, raw_sprites go_sprites[]) {
+	int _rand = 0;
+
 	for (int i = 0; i < 3; i++) {
 
 		if (_go->x > 2 && _go->x < 92) {
 			draw_the_object(*_go);
+		}
+		else if (_go->x <= 2) {
+			_rand = get_random();
+
+			*_go = obj_init(135, 25 - go_sprites[_rand].y, 2, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
 		}
 
 		_go->x--;

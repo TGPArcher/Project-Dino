@@ -1,10 +1,9 @@
 ﻿  Main.c
-c:\users\tgp\documents\github\project-dino\project dino\main.c(37): warning C4047: 'function': 'raw_sprites *' differs in levels of indirection from 'raw_sprites (*)[3]'
-c:\users\tgp\documents\github\project-dino\project dino\main.c(37): warning C4024: 'set_sprites': different types for formal and actual parameter 1
-c:\users\tgp\documents\github\project-dino\project dino\main.c(40): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
-c:\users\tgp\documents\github\project-dino\project dino\main.c(40): warning C4024: 'first_init_objects': different types for formal and actual parameter 1
-c:\users\tgp\documents\github\project-dino\project dino\main.c(63): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
-c:\users\tgp\documents\github\project-dino\project dino\main.c(63): warning C4024: 'object_handler': different types for formal and actual parameter 1
-c:\users\tgp\documents\github\project-dino\project dino\main.c(137): warning C4716: 'get_random': must return a value
+c:\users\tgp\documents\github\project-dino\project dino\main.c(38): warning C4047: 'function': 'raw_sprites *' differs in levels of indirection from 'raw_sprites (*)[3]'
+c:\users\tgp\documents\github\project-dino\project dino\main.c(38): warning C4024: 'set_sprites': different types for formal and actual parameter 1
+c:\users\tgp\documents\github\project-dino\project dino\main.c(41): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
+c:\users\tgp\documents\github\project-dino\project dino\main.c(41): warning C4024: 'first_init_objects': different types for formal and actual parameter 1
+c:\users\tgp\documents\github\project-dino\project dino\main.c(57): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
+c:\users\tgp\documents\github\project-dino\project dino\main.c(57): warning C4024: 'object_handler': different types for formal and actual parameter 1
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)
