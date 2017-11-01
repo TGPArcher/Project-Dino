@@ -26,7 +26,7 @@ void set_sprites(raw_sprites *);
 int get_random();
 void player_handler(int *, int *, int *, int *);
 void first_init_objects(object *, raw_sprites[]);
-void object_handler(object *, raw_sprites[]);
+void object_handler(object *, raw_sprites[], int, int*);
 
 int x, y, scor = 0;
 
@@ -50,17 +50,17 @@ void main() {
 	int alive = 1;
 
 	while (alive) {
-		draw_the_object(player);
-
-		draw_the_canvas();
-
-		object_handler(&go, go_sprites);
-
-		player_handler(&jumped, &how_many, &player.y, &alive);
-
 		Sleep(50);
 		system("cls");
 		scor++;
+
+		player_handler(&jumped, &how_many, &player.y, &alive);
+
+		draw_the_object(player);
+
+		object_handler(&go, go_sprites, player.y, &alive);
+
+		draw_the_canvas();
 	}
 }
 
@@ -141,8 +141,8 @@ void first_init_objects(object * _go, raw_sprites go_sprites[]) {
 }
 
 // object handler
-// handles object behavior and reinitialization
-void object_handler(object * _go, raw_sprites go_sprites[]) {
+// handles object behavior, reinitialization and collision
+void object_handler(object * _go, raw_sprites go_sprites[], int _py, int * _alive) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
@@ -154,6 +154,10 @@ void object_handler(object * _go, raw_sprites go_sprites[]) {
 			_rand = get_random();
 
 			*_go = obj_init(135, 25 - go_sprites[_rand].y, 2, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+		}
+
+		if (((_go->x >= 15 && _go->x < 23) || (_go->x + _go->sx - 1 >= 15 && _go->x + _go->sx - 1 < 23)) && ((_go->y >= _py && _go->y < _py + 5) || (_go->y + _go->sy - 1 >= _py && _go->y + _go->sy - 1 < _py + 5))) {
+			*_alive = 0;
 		}
 
 		_go->x--;
