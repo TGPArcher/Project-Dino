@@ -10,15 +10,14 @@ typedef struct raw_sprites {
 	int x, y;
 }raw_sprites;
 
-// Game Object's structure (owner, coord, sprite, spr_coord)
+// Game Object's structure (coord, sprite, spr_coord)
 typedef struct object {
-	int owner;
 	int x, y;
 	char sprite[10][15];
 	int sx, sy;
 }object;
 
-object obj_init(int, int, int, char[], int, int);
+object obj_init(int, int, char[], int, int);
 void set_console_pos(int, int);
 void draw_the_object(object);
 void draw_the_canvas();
@@ -40,7 +39,7 @@ void main() {
 	object go[3];
 	first_init_objects(&go, go_sprites);
 
-	object player = obj_init(15, 20, 1, "     ##  #   ########## #######  #   #  ", 8, 5);
+	object player = obj_init(15, 20, "     ##  #   ########## #######  #   #  ", 8, 5);
 
 	// player functionality
 	int jumped = 0;
@@ -52,7 +51,6 @@ void main() {
 	while (alive) {
 		Sleep(50);
 		system("cls");
-		scor++;
 
 		player_handler(&jumped, &how_many, &player.y, &alive);
 
@@ -66,7 +64,6 @@ void main() {
 
 // Load textures when the game starts
 void set_sprites(raw_sprites * go_sprites) {
-	//static raw_sprites go_sprites[3];
 
 	strcpy_s(go_sprites->str, 150, " ### ##### ### ##### ### ");
 	go_sprites->x = 5;
@@ -93,7 +90,7 @@ int get_random() {
 
 // handles player behavior on keyboard input
 void player_handler(int * _jump, int * _hm, int * _y, int * _alive) {
-	if (*_jump > 0) {
+	if (*_jump > 9) {
 		if (*_hm == 0) {
 			*_y = *_y - 1;
 			*_jump = *_jump - 1;
@@ -104,9 +101,10 @@ void player_handler(int * _jump, int * _hm, int * _y, int * _alive) {
 		}
 	}
 	else {
-		if (*_y < 20) {
+		if (*_y < 20 && *_jump > 0) {
 			if (*_hm == 0) {
 				*_y = *_y + 1;
+				*_jump = *_jump - 1;
 				*_hm = 1;
 			}
 			else {
@@ -123,7 +121,7 @@ void player_handler(int * _jump, int * _hm, int * _y, int * _alive) {
 		}
 		if (_input == ' ') {
 			if (*_jump == 0) {
-				*_jump = 9;
+				*_jump = 18;
 				*_hm = 0;
 			}
 		}
@@ -136,7 +134,7 @@ void first_init_objects(object * _go, raw_sprites go_sprites[]) {
 	for (int i = 0; i < 3; i++) {
 		int _rand = get_random();
 
-		*(_go + i) = obj_init(45 * (i + 2), 25 - go_sprites[_rand].y, 2, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+		*(_go + i) = obj_init(45 * (i + 2), 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
 	}
 }
 
@@ -153,7 +151,9 @@ void object_handler(object * _go, raw_sprites go_sprites[], int _py, int * _aliv
 		else if (_go->x <= 2) {
 			_rand = get_random();
 
-			*_go = obj_init(135, 25 - go_sprites[_rand].y, 2, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+			*_go = obj_init(135, 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+
+			scor++;
 		}
 
 		if (((_go->x >= 15 && _go->x < 23) || (_go->x + _go->sx - 1 >= 15 && _go->x + _go->sx - 1 < 23)) && ((_go->y >= _py && _go->y < _py + 5) || (_go->y + _go->sy - 1 >= _py && _go->y + _go->sy - 1 < _py + 5))) {
@@ -165,16 +165,15 @@ void object_handler(object * _go, raw_sprites go_sprites[], int _py, int * _aliv
 	}
 }
 
-// make a bigger _sprite array and add size parameters - done
-// or better try to find a way how to pass the array without doing any costly loop - still having to think about it
-object obj_init(int _x, int _y, int _owner, char _sprite[], int _sizeX, int _sizeY) {
+// initializes objects
+// _x,_y are coordinates, _sprite[] is the array wich holds the sprite, _sizeX,_sizeY is sprites size
+object obj_init(int _x, int _y, char _sprite[], int _sizeX, int _sizeY) {
 	object _obj;
 
 	_obj.x = _x;
 	_obj.y = _y;
 	_obj.sx = _sizeX;
 	_obj.sy = _sizeY;
-	_obj.owner = _owner;
 
 	for (int i = 0; i < _sizeY; i++) {
 		for (int j = 0; j < _sizeX; j++) {
