@@ -4,10 +4,16 @@
 #include <conio.h>
 #include <stdlib.h>
 
+typedef struct collider {
+	int x1, y1, x2, y2;
+}collider;
+
 // Structure for textures in a simple format
 typedef struct raw_sprites {
 	char str[150];
 	int x, y;
+	int n_colliders;
+	collider colliders[3];
 }raw_sprites;
 
 // Game Object's structure (coord, sprite, spr_coord)
@@ -15,9 +21,11 @@ typedef struct object {
 	int x, y;
 	char sprite[10][15];
 	int sx, sy;
+	int n_colliders;
+	collider colliders[3];
 }object;
 
-object obj_init(int, int, char[], int, int);
+object obj_init(int, int, char[], int, int, int, collider[]);
 void set_console_pos(int, int);
 void draw_the_object(object);
 void draw_the_canvas();
@@ -25,7 +33,8 @@ void set_sprites(raw_sprites *);
 int get_random();
 void player_handler(int *, int *, int *, int *);
 void first_init_objects(object *, raw_sprites[]);
-void object_handler(object *, raw_sprites[], int, int*);
+int collision_check(object, object);
+void object_handler(object *, raw_sprites[], object, int*);
 
 int x, y, scor = 0;
 
@@ -33,13 +42,13 @@ void main() {
 
 	set_console_pos(0, 0);
 
-	raw_sprites go_sprites[3];
+	raw_sprites go_sprites[4];
 	set_sprites(&go_sprites);
 
 	object go[3];
 	first_init_objects(&go, go_sprites);
 
-	object player = obj_init(15, 20, "     ##  #   ########## #######  #   #  ", 8, 5);
+	object player = obj_init(15, 20, go_sprites[3].str, go_sprites[3].x, go_sprites[3].y, go_sprites[3].n_colliders, go_sprites[3].colliders);
 
 	// player functionality
 	int jumped = 0;
@@ -56,7 +65,7 @@ void main() {
 
 		draw_the_object(player);
 
-		object_handler(&go, go_sprites, player.y, &alive);
+		object_handler(&go, go_sprites, player, &alive);
 
 		draw_the_canvas();
 	}
@@ -68,16 +77,49 @@ void set_sprites(raw_sprites * go_sprites) {
 	strcpy_s(go_sprites->str, 150, " ### ##### ### ##### ### ");
 	go_sprites->x = 5;
 	go_sprites->y = 5;
+	go_sprites->n_colliders = 1;
+	go_sprites->colliders[0].x1 = 0;
+	go_sprites->colliders[0].y1 = 0;
+	go_sprites->colliders[0].x2 = 4;
+	go_sprites->colliders[0].y2 = 4;
 
 	go_sprites++;
 	strcpy_s(go_sprites->str, 150, " ## #### ## ");
 	go_sprites->x = 4;
 	go_sprites->y = 3;
+	go_sprites->n_colliders = 1;
+	go_sprites->colliders[0].x1 = 0;
+	go_sprites->colliders[0].y1 = 0;
+	go_sprites->colliders[0].x2 = 3;
+	go_sprites->colliders[0].y2 = 2;
 
 	go_sprites++;
 	strcpy_s(go_sprites->str, 150, "      ###      ##### ##   ### #### ##### ##   ### ");
 	go_sprites->x = 10;
 	go_sprites->y = 5;
+	go_sprites->n_colliders = 2;
+	go_sprites->colliders[0].x1 = 0;
+	go_sprites->colliders[0].y1 = 2;
+	go_sprites->colliders[0].x2 = 3;
+	go_sprites->colliders[0].y2 = 4;
+	go_sprites->colliders[1].x1 = 5;
+	go_sprites->colliders[1].y1 = 0;
+	go_sprites->colliders[1].x2 = 9;
+	go_sprites->colliders[1].y2 = 4;
+
+	go_sprites++;
+	strcpy_s(go_sprites->str, 150, "     ##  #   ########## #######  #   #  ");
+	go_sprites->x = 8;
+	go_sprites->y = 5;
+	go_sprites->n_colliders = 2;
+	go_sprites->colliders[0].x1 = 0;
+	go_sprites->colliders[0].y1 = 0;
+	go_sprites->colliders[0].x2 = 7;
+	go_sprites->colliders[0].y2 = 3;
+	go_sprites->colliders[1].x1 = 1;
+	go_sprites->colliders[1].y1 = 4;
+	go_sprites->colliders[1].x2 = 5;
+	go_sprites->colliders[1].y2 = 4;
 }
 
 // Get a "random" number
@@ -116,7 +158,7 @@ void player_handler(int * _jump, int * _hm, int * _y, int * _alive) {
 	if (_kbhit()) {
 		char _input = _getch();
 
-		if (_input == 's') {
+		if (_input == 'x') {
 			*_alive = 0;
 		}
 		if (_input == ' ') {
@@ -134,40 +176,58 @@ void first_init_objects(object * _go, raw_sprites go_sprites[]) {
 	for (int i = 0; i < 3; i++) {
 		int _rand = get_random();
 
-		*(_go + i) = obj_init(45 * (i + 2), 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+		*(_go + i) = obj_init(45 * (i + 2), 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y, go_sprites[_rand].n_colliders, go_sprites[_rand].colliders);
 	}
+}
+
+// Function to check if the object is colliding with player
+int collision_check(object _go, object _player) {
+	int condition = 1;
+
+	for (int i = 0; i < _go.n_colliders && condition == 1; i++) {
+		for (int j = 0; j < _player.n_colliders && condition == 1; j++) {
+			if (((_go.colliders[i].y1 + _go.y >= _player.colliders[j].y1 + _player.y && _go.colliders[i].y1 + _go.y <= _player.colliders[j].y2 + _player.y) &&
+				(_go.colliders[i].x1 + _go.x >= _player.colliders[j].x1 + _player.x && _go.colliders[i].x1 + _go.x <= _player.colliders[j].x2 + _player.x)) ||
+				((_go.colliders[i].y2 + _go.y >= _player.colliders[j].y1 + _player.y && _go.colliders[i].y2 + _go.y <= _player.colliders[j].y2 + _player.y) &&
+				(_go.colliders[i].x2 + _go.x >= _player.colliders[j].x1 + _player.x && _go.colliders[i].x2 + _go.x <= _player.colliders[j].x2 + _player.x))) {
+				condition = 0;
+			}
+		}
+	}
+
+	return condition;
 }
 
 // object handler
 // handles object behavior, reinitialization and collision
-void object_handler(object * _go, raw_sprites go_sprites[], int _py, int * _alive) {
+void object_handler(object * _go, raw_sprites go_sprites[], object _player, int * _alive) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
 
+		_go->x--;
+
 		if (_go->x > 2 && _go->x < 92) {
 			draw_the_object(*_go);
+
+			if ((_go->x >= _player.x && _go->x < _player.x + _player.sx) || (_go->x + _go->sx - 1 >= _player.x && _go->x + _go->sx - 1 < _player.x + _player.sx))
+				*_alive = collision_check(*_go, _player);
 		}
 		else if (_go->x <= 2) {
 			_rand = get_random();
 
-			*_go = obj_init(135, 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y);
+			*_go = obj_init(135, 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y, go_sprites[_rand].n_colliders, go_sprites[_rand].colliders);
 
 			scor++;
 		}
 
-		if (((_go->x >= 15 && _go->x < 23) || (_go->x + _go->sx - 1 >= 15 && _go->x + _go->sx - 1 < 23)) && ((_go->y >= _py && _go->y < _py + 5) || (_go->y + _go->sy - 1 >= _py && _go->y + _go->sy - 1 < _py + 5))) {
-			*_alive = 0;
-		}
-
-		_go->x--;
 		*_go++;
 	}
 }
 
 // initializes objects
 // _x,_y are coordinates, _sprite[] is the array wich holds the sprite, _sizeX,_sizeY is sprites size
-object obj_init(int _x, int _y, char _sprite[], int _sizeX, int _sizeY) {
+object obj_init(int _x, int _y, char _sprite[], int _sizeX, int _sizeY, int _collider_number, collider _colliders[]) {
 	object _obj;
 
 	_obj.x = _x;
@@ -179,6 +239,11 @@ object obj_init(int _x, int _y, char _sprite[], int _sizeX, int _sizeY) {
 		for (int j = 0; j < _sizeX; j++) {
 			_obj.sprite[i][j] = _sprite[i * _sizeX + j];
 		}
+	}
+
+	for (int i = 0; i < _collider_number; i++) {
+		_obj.n_colliders = _collider_number;
+		_obj.colliders[i] = _colliders[i];
 	}
 
 	return _obj;
