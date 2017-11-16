@@ -26,19 +26,19 @@ typedef struct object {
 }object;
 
 object obj_init(int, int, char[], int, int, int, collider[]);
-void set_console_pos(int, int);
-void draw_the_object(object);
-void draw_the_canvas();
-void set_sprites(raw_sprites *);
-int get_random();
-void player_handler(int *, int *, int *, int *);
-void first_init_objects(object *, raw_sprites[]);
-int collision_check(object, object);
-void object_handler(object *, raw_sprites[], object, int*);
+//void set_console_pos(int, int);
+//void draw_the_object(object);
+//void draw_the_canvas();
+//void set_sprites(raw_sprites*);
+//int get_random();
+//void player_handler(int*, int*, int*, int*);
+//void first_init_objects(object*, raw_sprites[]);
+//int collision_check(object*, object*);
+//void object_handler(object*, raw_sprites[], object*, int*);
 
 int x, y, scor = 0;
 
-void main() {
+int main() {
 
 	set_console_pos(0, 0);
 
@@ -53,6 +53,7 @@ void main() {
 	// player functionality
 	int jumped = 0;
 	int how_many = 0;
+	int stop = 0;
 
 	// For stoping the game
 	int alive = 1;
@@ -61,18 +62,20 @@ void main() {
 		Sleep(50);
 		system("cls");
 
-		player_handler(&jumped, &how_many, &player.y, &alive);
+		player_handler(&jumped, &how_many, &player.y, &player.x, &alive, &stop);
 
 		draw_the_object(player);
 
-		object_handler(&go, go_sprites, player, &alive);
+		object_handler(&go, go_sprites, &player, &alive, &stop);
 
 		draw_the_canvas();
 	}
+
+	return 0;
 }
 
 // Load textures when the game starts
-void set_sprites(raw_sprites * go_sprites) {
+int set_sprites(raw_sprites * go_sprites) {
 
 	strcpy_s(go_sprites->str, 150, " ### ##### ### ##### ### ");
 	go_sprites->x = 5;
@@ -120,6 +123,8 @@ void set_sprites(raw_sprites * go_sprites) {
 	go_sprites->colliders[1].y1 = 4;
 	go_sprites->colliders[1].x2 = 5;
 	go_sprites->colliders[1].y2 = 4;
+
+	return 0;
 }
 
 // Get a "random" number
@@ -131,7 +136,7 @@ int get_random() {
 }
 
 // handles player behavior on keyboard input
-void player_handler(int * _jump, int * _hm, int * _y, int * _alive) {
+int player_handler(int * _jump, int * _hm, int * _y, int * _x, int * _alive, int * stop) {
 	if (*_jump > 9) {
 		if (*_hm == 0) {
 			*_y = *_y - 1;
@@ -167,29 +172,46 @@ void player_handler(int * _jump, int * _hm, int * _y, int * _alive) {
 				*_hm = 0;
 			}
 		}
+		if (_input == 't') {
+			*stop = 1;
+		}
+		if (_input == 'w') {
+			*_y = *_y - 1;
+		}
+		if (_input == 's') {
+			*_y = *_y + 1;
+		}
+		if (_input == 'a') {
+			*_x = *_x - 1;
+		}
+		if (_input == 'd') {
+			*_x = *_x + 1;
+		}
 	}
+
+	return 0;
 }
 
 // First initialization of game objects
 // (they can't be firstly initialized by the handler
-void first_init_objects(object * _go, raw_sprites go_sprites[]) {
+int first_init_objects(object * _go, raw_sprites go_sprites[]) {
 	for (int i = 0; i < 3; i++) {
 		int _rand = get_random();
 
 		*(_go + i) = obj_init(45 * (i + 2), 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y, go_sprites[_rand].n_colliders, go_sprites[_rand].colliders);
 	}
+
+	return 0;
 }
 
 // Function to check if the object is colliding with player
-int collision_check(object _go, object _player) {
+int collision_check(object * _go, object * _player) {
 	int condition = 1;
 
-	for (int i = 0; i < _go.n_colliders && condition == 1; i++) {
-		for (int j = 0; j < _player.n_colliders && condition == 1; j++) {
-			if (((_go.colliders[i].y1 + _go.y >= _player.colliders[j].y1 + _player.y && _go.colliders[i].y1 + _go.y <= _player.colliders[j].y2 + _player.y) &&
-				(_go.colliders[i].x1 + _go.x >= _player.colliders[j].x1 + _player.x && _go.colliders[i].x1 + _go.x <= _player.colliders[j].x2 + _player.x)) ||
-				((_go.colliders[i].y2 + _go.y >= _player.colliders[j].y1 + _player.y && _go.colliders[i].y2 + _go.y <= _player.colliders[j].y2 + _player.y) &&
-				(_go.colliders[i].x2 + _go.x >= _player.colliders[j].x1 + _player.x && _go.colliders[i].x2 + _go.x <= _player.colliders[j].x2 + _player.x))) {
+	for (int i = 0; i < _go->n_colliders && condition == 1; i++) {
+		for (int j = 0; j < _player->n_colliders && condition == 1; j++) {
+			if (!(_player->colliders[j].x1 + _player->x > _go->colliders[i].x2 + _go->x || _player->colliders[j].y1 + _player->y > _go->colliders[i].y2 + _go->y ||
+				_go->colliders[i].x1 + _go->x > _player->colliders[j].x2 + _player->x || _go->colliders[i].y1 + _go->y > _player->colliders[j].y2 + _player->y)) {
 				condition = 0;
 			}
 		}
@@ -200,18 +222,20 @@ int collision_check(object _go, object _player) {
 
 // object handler
 // handles object behavior, reinitialization and collision
-void object_handler(object * _go, raw_sprites go_sprites[], object _player, int * _alive) {
+int object_handler(object * _go, raw_sprites go_sprites[], object * _player, int * _alive, int * stop) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
 
+		if (!*stop) {
 		_go->x--;
+		}
 
 		if (_go->x > 2 && _go->x < 92) {
 			draw_the_object(*_go);
 
-			if ((_go->x >= _player.x && _go->x < _player.x + _player.sx) || (_go->x + _go->sx - 1 >= _player.x && _go->x + _go->sx - 1 < _player.x + _player.sx))
-				*_alive = collision_check(*_go, _player);
+			if ((_go->x >= _player->x && _go->x < _player->x + _player->sx) || (_go->x + _go->sx - 1 >= _player->x && _go->x + _go->sx - 1 < _player->x + _player->sx))
+				*_alive = collision_check(_go, _player);
 		}
 		else if (_go->x <= 2) {
 			_rand = get_random();
@@ -223,6 +247,8 @@ void object_handler(object * _go, raw_sprites go_sprites[], object _player, int 
 
 		*_go++;
 	}
+
+	return 0;
 }
 
 // initializes objects
@@ -251,7 +277,7 @@ object obj_init(int _x, int _y, char _sprite[], int _sizeX, int _sizeY, int _col
 }
 
 // Sets the console cursor to (X,Y)
-void set_console_pos(int _x, int _y) {
+int set_console_pos(int _x, int _y) {
 	HANDLE cons_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD cons_coord;
 
@@ -259,10 +285,12 @@ void set_console_pos(int _x, int _y) {
 	x = _x; y = _y;
 
 	SetConsoleCursorPosition(cons_handle, cons_coord);
+
+	return 0;
 }
 
 // Draws the object _go to console
-void draw_the_object(object _go) {
+int draw_the_object(object _go) {
 
 	for (int i = 0; i < _go.sy; i++) {
 		set_console_pos(_go.x, _go.y + i);
@@ -281,10 +309,12 @@ void draw_the_object(object _go) {
 	}
 
 	set_console_pos(0, 30);
+
+	return 0;
 }
 
 // Draws a canvas for the game
-void draw_the_canvas() {
+int draw_the_canvas() {
 
 	for (int i = 2; i < 98; i++) {
 		set_console_pos(i, 1);
@@ -312,4 +342,6 @@ void draw_the_canvas() {
 	printf("----------------");
 
 	set_console_pos(0, 30);
+
+	return 0;
 }
