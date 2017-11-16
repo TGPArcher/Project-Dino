@@ -26,21 +26,19 @@ typedef struct object {
 }object;
 
 object obj_init(int, int, char[], int, int, int, collider[]);
-//void set_console_pos(int, int);
-//void draw_the_object(object);
-//void draw_the_canvas();
-//void set_sprites(raw_sprites*);
-//int get_random();
-//void player_handler(int*, int*, int*, int*);
-//void first_init_objects(object*, raw_sprites[]);
-//int collision_check(object*, object*);
-//void object_handler(object*, raw_sprites[], object*, int*);
+extern int menu();
 
-int x, y, scor = 0;
+int x, y;
 
 int main() {
-
 	set_console_pos(0, 0);
+
+	while (!menu());
+
+	return 0;
+}
+
+int game_scene() {
 
 	raw_sprites go_sprites[4];
 	set_sprites(&go_sprites);
@@ -58,6 +56,9 @@ int main() {
 	// For stoping the game
 	int alive = 1;
 
+	// Game score
+	int score = 0;
+
 	while (alive) {
 		Sleep(50);
 		system("cls");
@@ -66,7 +67,9 @@ int main() {
 
 		draw_the_object(player);
 
-		object_handler(&go, go_sprites, &player, &alive, &stop);
+		object_handler(&go, go_sprites, &player, &alive, &stop, &score);
+
+		display_score(score);
 
 		draw_the_canvas();
 	}
@@ -222,7 +225,7 @@ int collision_check(object * _go, object * _player) {
 
 // object handler
 // handles object behavior, reinitialization and collision
-int object_handler(object * _go, raw_sprites go_sprites[], object * _player, int * _alive, int * stop) {
+int object_handler(object * _go, raw_sprites go_sprites[], object * _player, int * _alive, int * stop, int * score) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
@@ -242,7 +245,7 @@ int object_handler(object * _go, raw_sprites go_sprites[], object * _player, int
 
 			*_go = obj_init(135, 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y, go_sprites[_rand].n_colliders, go_sprites[_rand].colliders);
 
-			scor++;
+			*score = *score + 1;
 		}
 
 		*_go++;
@@ -313,6 +316,20 @@ int draw_the_object(object _go) {
 	return 0;
 }
 
+int display_score(int score) {
+
+	set_console_pos(41, 3);
+	printf("---------------");
+	set_console_pos(41, 4);
+	printf("|  Scor: %d", score);
+	set_console_pos(55, 4);
+	printf("|");
+	set_console_pos(41, 5);
+	printf("---------------");
+
+	return 0;
+}
+
 // Draws a canvas for the game
 int draw_the_canvas() {
 
@@ -331,15 +348,6 @@ int draw_the_canvas() {
 		set_console_pos(98, i);
 		printf("||");
 	}
-
-	set_console_pos(41, 3);
-	printf("----------------");
-	set_console_pos(41, 4);
-	printf("|  Scor: %d", scor);
-	set_console_pos(56, 4);
-	printf("|");
-	set_console_pos(41, 5);
-	printf("----------------");
 
 	set_console_pos(0, 30);
 
