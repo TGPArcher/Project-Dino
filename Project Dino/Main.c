@@ -1,32 +1,13 @@
-#include <stdio.h>
-#include <Windows.h>
-#include <string.h>
-#include <conio.h>
 #include <stdlib.h>
-
-typedef struct collider {
-	int x1, y1, x2, y2;
-}collider;
-
-// Structure for textures in a simple format
-typedef struct raw_sprites {
-	char str[150];
-	int x, y;
-	int n_colliders;
-	collider colliders[3];
-}raw_sprites;
-
-// Game Object's structure (coord, sprite, spr_coord)
-typedef struct object {
-	int x, y;
-	char sprite[10][15];
-	int sx, sy;
-	int n_colliders;
-	collider colliders[3];
-}object;
+#include <stdio.h>
+#include <conio.h>
+#include <string.h>
+#include <Windows.h>
+#include "g_struct.h"
 
 object obj_init(int, int, char[], int, int, int, collider[]);
 extern int menu();
+extern int draw_the_canvas();
 
 int x, y;
 
@@ -326,30 +307,6 @@ int display_score(int score) {
 	printf("|");
 	set_console_pos(41, 5);
 	printf("---------------");
-
-	return 0;
-}
-
-// Draws a canvas for the game
-int draw_the_canvas() {
-
-	for (int i = 2; i < 98; i++) {
-		set_console_pos(i, 1);
-		printf("-");
-
-		set_console_pos(i, 25);
-		printf("-");
-	}
-
-	for (int i = 1; i <= 25; i++) {
-		set_console_pos(0, i);
-		printf("||");
-
-		set_console_pos(98, i);
-		printf("||");
-	}
-
-	set_console_pos(0, 30);
 
 	return 0;
 }

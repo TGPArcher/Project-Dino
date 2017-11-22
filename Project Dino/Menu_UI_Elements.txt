@@ -1,0 +1,11 @@
+10
+38 9 3 ->
+41 8 16 ---------------
+41 9 16 |    Start    |
+41 10 16 ---------------
+41 13 16 ---------------
+41 14 16 |    Stop     |
+41 15 16 ---------------
+42 5 13 The Cha Lama
+15 20 71 Use 'w' or 's' to move the arrow up or down, and press Enter to select
+17 21 67 How to play: Press space bar to jump. Do not hit the cactus plants

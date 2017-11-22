@@ -149,6 +149,15 @@
     <ClCompile Include="Main.c" />
     <ClCompile Include="Menu.c" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Canvas_UI_Elements.txt" />
+    <Text Include="GO_Elements.txt" />
+    <Text Include="Menu_UI_Elements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="c_struct.h" />
+    <ClInclude Include="g_struct.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

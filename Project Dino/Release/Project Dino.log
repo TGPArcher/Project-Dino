@@ -1,0 +1,19 @@
+﻿  Main.c
+Main.c(34): warning C4013: 'set_console_pos' undefined; assuming extern returning int
+Main.c(44): warning C4013: 'set_sprites' undefined; assuming extern returning int
+Main.c(47): warning C4013: 'first_init_objects' undefined; assuming extern returning int
+Main.c(66): warning C4013: 'player_handler' undefined; assuming extern returning int
+Main.c(68): warning C4013: 'draw_the_object' undefined; assuming extern returning int
+Main.c(70): warning C4013: 'object_handler' undefined; assuming extern returning int
+Main.c(72): warning C4013: 'display_score' undefined; assuming extern returning int
+Main.c(74): warning C4013: 'draw_the_canvas' undefined; assuming extern returning int
+  Menu.c
+Menu.c(17): warning C4013: 'menu_controls' undefined; assuming extern returning int
+Menu.c(19): warning C4013: 'info_text' undefined; assuming extern returning int
+Menu.c(21): warning C4013: 'menu_buttons' undefined; assuming extern returning int
+Menu.c(62): warning C4013: 'printf' undefined; assuming extern returning int
+  Generating code
+  All 20 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\Release\Project Dino.exe
+  Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\Release\Project Dino.pdb (Full PDB)

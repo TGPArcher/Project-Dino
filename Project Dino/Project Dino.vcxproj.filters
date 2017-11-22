@@ -22,4 +22,23 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Menu_UI_Elements.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="Canvas_UI_Elements.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="GO_Elements.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="g_struct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="c_struct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
-﻿cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
-  Menu.c
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(17): warning C4013: 'menu_controls' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(19): warning C4013: 'info_text' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(21): warning C4013: 'menu_buttons' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(62): warning C4013: 'printf' undefined; assuming extern returning int
+﻿  Menu.c
+c:\users\tgp\documents\github\project-dino\project dino\menu.c(12): warning C4013: 'get_UI_Elements' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\menu.c(20): warning C4013: 'menu_controls' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\menu.c(22): warning C4013: 'menu_buttons' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\menu.c(24): warning C4013: 'draw_the_canvas' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\menu.c(71): warning C4013: 'get_Canvas_Elements' undefined; assuming extern returning int
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)
