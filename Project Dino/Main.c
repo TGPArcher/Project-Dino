@@ -5,14 +5,14 @@
 #include <Windows.h>
 #include "g_struct.h"
 
-object obj_init(int, int, char[], int, int, int, collider[]);
+object obj_init(int, int, sprites*);
 extern int menu();
 extern int draw_the_canvas();
 
 int x, y;
 
 int main() {
-	set_console_pos(0, 0);
+	//set_console_pos(0, 0);
 
 	while (!menu());
 
@@ -21,14 +21,15 @@ int main() {
 
 int game_scene() {
 
-	raw_sprites * go_sprites;
+	sprites * go_sprites;
 	set_sprites(&go_sprites);
 
 	object go[3];
 	first_init_objects(&go, &go_sprites);
 
-	object player = obj_init(15, 20, go_sprites[0].str, go_sprites[0].x, go_sprites[0].y, go_sprites[0].n_colliders, go_sprites[0].colliders);
-
+	//object player = obj_init(15, 20, go_sprites[0].str, go_sprites[0].x, go_sprites[0].y, go_sprites[0].n_colliders, go_sprites[0].colliders);
+	object player = obj_init(15, 20, &go_sprites[0]);
+	
 	// player functionality
 	int jumped = 0;
 	int how_many = 0;
@@ -44,9 +45,9 @@ int game_scene() {
 		Sleep(50);
 		system("cls");
 
-		player_handler(&jumped, &how_many, &player.y, &player.x, &alive, &stop);
+		player_handler(&jumped, &how_many, &player.position, &alive, &stop);
 
-		draw_the_object(player);
+		draw_the_object(&player);
 
 		object_handler(&go, &go_sprites, &player, &alive, &stop, &score);
 
@@ -59,27 +60,26 @@ int game_scene() {
 }
 
 // Load textures when the game starts
-int set_sprites(raw_sprites ** go_sprites) {
+int set_sprites(sprites ** go_sprites) {
 
 	FILE * go_file;
 	fopen_s(&go_file, "GO_Elements.txt", "r");
 
-	int nr, len;
+	int nr, length;
 	fscanf_s(go_file, "%d", &nr);
-	*go_sprites = (raw_sprites*)malloc(sizeof(raw_sprites)*nr);
+	*go_sprites = (sprites*)malloc(sizeof(sprites)*nr);
 
 	for (int i = 0; i < nr; i++) {
-		fscanf_s(go_file, "%d %d %d ", &(*go_sprites)[i].x, &(*go_sprites)[i].y, &(*go_sprites)[i].n_colliders);
+		fscanf_s(go_file, "%d %d %d ", &(*go_sprites)[i].anchors.x, &(*go_sprites)[i].anchors.y, &(*go_sprites)[i].n_colliders);
 
 		(*go_sprites)[i].colliders = (collider*)malloc(sizeof(collider)*(*go_sprites)[i].n_colliders);
 		for (int j = 0; j < (*go_sprites)[i].n_colliders; j++) {
-			fscanf_s(go_file, "%d %d %d %d ", &(*go_sprites)[i].colliders[j].x1, &(*go_sprites)[i].colliders[j].y1, &(*go_sprites)[i].colliders[j].x2, &(*go_sprites)[i].colliders[j].y2);
+			fscanf_s(go_file, "%d %d %d %d ", &(*go_sprites)[i].colliders[j].position1.x, &(*go_sprites)[i].colliders[j].position1.y, &(*go_sprites)[i].colliders[j].position2.x, &(*go_sprites)[i].colliders[j].position2.y);
 		}
 
-		fscanf_s(go_file, "%d ", &len);
-
-		(*go_sprites)[i].str = (char *)malloc(sizeof(char)*len);
-		fgets((*go_sprites)[i].str, len, go_file);
+		length = (*go_sprites)[i].anchors.x * (*go_sprites)[i].anchors.y + 1;
+		(*go_sprites)[i].str = (char *)malloc(sizeof(char) * length);
+		fgets((*go_sprites)[i].str, length, go_file);
 		(*go_sprites)[i].str[0] = ' ';
 		fseek(go_file, SEEK_CUR, 1);
 	}
@@ -98,10 +98,10 @@ int get_random() {
 }
 
 // handles player behavior on keyboard input
-int player_handler(int * _jump, int * _hm, int * _y, int * _x, int * _alive, int * stop) {
+int player_handler(int * _jump, int * _hm, pos * _position, int * _alive, int * stop) {
 	if (*_jump > 9) {
 		if (*_hm == 0) {
-			*_y = *_y - 1;
+			_position->y = _position->y - 1;
 			*_jump = *_jump - 1;
 			*_hm = 1;
 		}
@@ -110,9 +110,9 @@ int player_handler(int * _jump, int * _hm, int * _y, int * _x, int * _alive, int
 		}
 	}
 	else {
-		if (*_y < 20 && *_jump > 0) {
+		if (_position->y < 20 && *_jump > 0) {
 			if (*_hm == 0) {
-				*_y = *_y + 1;
+				_position->y = _position->y + 1;
 				*_jump = *_jump - 1;
 				*_hm = 1;
 			}
@@ -138,16 +138,16 @@ int player_handler(int * _jump, int * _hm, int * _y, int * _x, int * _alive, int
 			*stop = 1;
 		}
 		if (_input == 'w') {
-			*_y = *_y - 1;
+			_position->y = _position->y - 1;
 		}
 		if (_input == 's') {
-			*_y = *_y + 1;
+			_position->y = _position->y + 1;
 		}
 		if (_input == 'a') {
-			*_x = *_x - 1;
+			_position->x = _position->x - 1;
 		}
 		if (_input == 'd') {
-			*_x = *_x + 1;
+			_position->x = _position->x + 1;
 		}
 	}
 
@@ -156,11 +156,11 @@ int player_handler(int * _jump, int * _hm, int * _y, int * _x, int * _alive, int
 
 // First initialization of game objects
 // (they can't be firstly initialized by the handler
-int first_init_objects(object * _go, raw_sprites ** go_sprites) {
+int first_init_objects(object * _go, sprites ** go_sprites) {
 	for (int i = 0; i < 3; i++) {
 		int _rand = get_random() + 1;
 
-		_go[i] = obj_init(45 * (i + 2), 25 - (*go_sprites)[_rand].y, (*go_sprites)[_rand].str, (*go_sprites)[_rand].x, (*go_sprites)[_rand].y, (*go_sprites)[_rand].n_colliders, (*go_sprites)[_rand].colliders);
+		_go[i] = obj_init(45 * (i + 2), 25 - (*go_sprites)[_rand].anchors.y, &(*go_sprites)[_rand]);
 	}
 
 	return 0;
@@ -170,10 +170,10 @@ int first_init_objects(object * _go, raw_sprites ** go_sprites) {
 int collision_check(object * _go, object * _player) {
 	int condition = 1;
 
-	for (int i = 0; i < _go->n_colliders && condition == 1; i++) {
-		for (int j = 0; j < _player->n_colliders && condition == 1; j++) {
-			if (!(_player->colliders[j].x1 + _player->x > _go->colliders[i].x2 + _go->x || _player->colliders[j].y1 + _player->y > _go->colliders[i].y2 + _go->y ||
-				_go->colliders[i].x1 + _go->x > _player->colliders[j].x2 + _player->x || _go->colliders[i].y1 + _go->y > _player->colliders[j].y2 + _player->y)) {
+	for (int i = 0; i < _go->sprite.n_colliders && condition == 1; i++) {
+		for (int j = 0; j < _player->sprite.n_colliders && condition == 1; j++) {
+			if (!(_player->sprite.colliders[j].position1.x + _player->position.x > _go->sprite.colliders[i].position2.x + _go->position.x || _player->sprite.colliders[j].position1.y + _player->position.y > _go->sprite.colliders[i].position2.y + _go->position.y ||
+				_go->sprite.colliders[i].position1.x + _go->position.x > _player->sprite.colliders[j].position2.x + _player->position.x || _go->sprite.colliders[i].position1.y + _go->position.y > _player->sprite.colliders[j].position2.y + _player->position.y)) {
 				condition = 0;
 			}
 		}
@@ -184,30 +184,28 @@ int collision_check(object * _go, object * _player) {
 
 // object handler
 // handles object behavior, reinitialization and collision
-int object_handler(object * _go, raw_sprites ** go_sprites, object * _player, int * _alive, int * stop, int * score) {
+int object_handler(object * _go, sprites ** go_sprites, object * _player, int * _alive, int * stop, int * score) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
 
 		if (!*stop) {
-		_go->x--;
+		_go[i].position.x--;
 		}
 
-		if (_go->x > 2 && _go->x < 92) {
-			draw_the_object(*_go);
+		if (_go[i].position.x > 2 && _go[i].position.x < 92) {
+			draw_the_object(&_go[i]);
 
-			if ((_go->x >= _player->x && _go->x < _player->x + _player->sx) || (_go->x + _go->sx - 1 >= _player->x && _go->x + _go->sx - 1 < _player->x + _player->sx))
-				*_alive = collision_check(_go, _player);
+			if ((_go[i].position.x >= _player->position.x && _go[i].position.x < _player->position.x + _player->sprite.anchors.x) || (_go[i].position.x + _go[i].sprite.anchors.x - 1 >= _player->position.x && _go[i].position.x + _go[i].sprite.anchors.x - 1 < _player->position.x + _player->sprite.anchors.x))
+				*_alive = collision_check(&_go[i], _player);
 		}
-		else if (_go->x <= 2) {
+		else if (_go[i].position.x <= 2) {
 			_rand = get_random() + 1;
 
-			*_go = obj_init(135, 25 - (*go_sprites)[_rand].y, (*go_sprites)[_rand].str, (*go_sprites)[_rand].x, (*go_sprites)[_rand].y, (*go_sprites)[_rand].n_colliders, (*go_sprites)[_rand].colliders);
+			_go[i] = obj_init(135, 25 - (*go_sprites)[_rand].anchors.y, &(*go_sprites)[_rand]);
 
 			*score = *score + 1;
 		}
-
-		*_go++;
 	}
 
 	return 0;
@@ -215,33 +213,25 @@ int object_handler(object * _go, raw_sprites ** go_sprites, object * _player, in
 
 // initializes objects
 // _x,_y are coordinates, _sprite[] is the array wich holds the sprite, _sizeX,_sizeY is sprites size
-object obj_init(int _x, int _y, char * _sprite, int _sizeX, int _sizeY, int _collider_number, collider * _colliders) {
+object obj_init(int _x, int _y, sprites * _sprite) {
 	object _obj;
 
-	_obj.x = _x;
-	_obj.y = _y;
-	_obj.sx = _sizeX;
-	_obj.sy = _sizeY;
-
-	for (int i = 0; i < _sizeY; i++) {
-		for (int j = 0; j < _sizeX; j++) {
-			_obj.sprite[i][j] = _sprite[i * _sizeX + j];
-		}
-	}
-
-	for (int i = 0; i < _collider_number; i++) {
-		_obj.n_colliders = _collider_number;
-		_obj.colliders[i] = _colliders[i];
-	}
+	_obj.position.x = _x;
+	_obj.position.y = _y;
+	_obj.sprite = *_sprite;
 
 	return _obj;
-
 }
 
 // Sets the console cursor to (X,Y)
 int set_console_pos(int _x, int _y) {
 	HANDLE cons_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD cons_coord;
+	
+	CONSOLE_CURSOR_INFO info;
+	info.dwSize = 100;
+	info.bVisible = FALSE;
+	SetConsoleCursorInfo(cons_handle, &info);
 
 	cons_coord.X = _x; cons_coord.Y = _y;
 	x = _x; y = _y;
@@ -252,15 +242,16 @@ int set_console_pos(int _x, int _y) {
 }
 
 // Draws the object _go to console
-int draw_the_object(object _go) {
+int draw_the_object(object * _go) {
 
-	for (int i = 0; i < _go.sy; i++) {
-		set_console_pos(_go.x, _go.y + i);
+	for (int i = 0; i < _go->sprite.anchors.y; i++) {
+		set_console_pos(_go->position.x, _go->position.y + i);
 
-		for (int j = 0; j < _go.sx; j++) {
+		for (int j = 0; j < _go->sprite.anchors.x; j++) {
+			int index = i * _go->sprite.anchors.x + j;
 
-			if (_go.sprite[i][j] != ' ') {
-				printf("%c", _go.sprite[i][j]);
+			if (_go->sprite.str[index] != ' ') {
+				printf("%c", _go->sprite.str[index]);
 				x++;
 			}
 			else {

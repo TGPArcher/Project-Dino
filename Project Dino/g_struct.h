@@ -1,23 +1,24 @@
 #pragma once
 
+typedef struct pos {
+	int x, y;
+}pos;
+
 // game object collider
 typedef struct collider {
-	int x1, y1, x2, y2;
+	pos position1, position2;
 }collider;
 
 // textures in a simple format
-typedef struct raw_sprites {
+typedef struct sprites {
 	char * str;
-	int x, y;
+	pos anchors;
 	int n_colliders;
 	collider * colliders;
-}raw_sprites;
+}sprites;
 
 // Game Object's structure (coord, sprite, spr_coord)
 typedef struct object {
-	int x, y;
-	char sprite[10][15];
-	int sx, sy;
-	int n_colliders;
-	collider colliders[3];
+	pos position;
+	sprites sprite;
 }object;
