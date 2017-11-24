@@ -1,8 +1,10 @@
-﻿  Menu.c
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(12): warning C4013: 'get_UI_Elements' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(20): warning C4013: 'menu_controls' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(22): warning C4013: 'menu_buttons' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(24): warning C4013: 'draw_the_canvas' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\menu.c(71): warning C4013: 'get_Canvas_Elements' undefined; assuming extern returning int
+﻿  Main.c
+c:\users\tgp\documents\github\project-dino\project dino\main.c(15): warning C4013: 'set_console_pos' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\main.c(25): warning C4013: 'set_sprites' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\main.c(28): warning C4013: 'first_init_objects' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\main.c(47): warning C4013: 'player_handler' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\main.c(49): warning C4013: 'draw_the_object' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\main.c(51): warning C4013: 'object_handler' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\main.c(53): warning C4013: 'display_score' undefined; assuming extern returning int
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)

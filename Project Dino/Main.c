@@ -21,13 +21,13 @@ int main() {
 
 int game_scene() {
 
-	raw_sprites go_sprites[4];
+	raw_sprites * go_sprites;
 	set_sprites(&go_sprites);
 
 	object go[3];
-	first_init_objects(&go, go_sprites);
+	first_init_objects(&go, &go_sprites);
 
-	object player = obj_init(15, 20, go_sprites[3].str, go_sprites[3].x, go_sprites[3].y, go_sprites[3].n_colliders, go_sprites[3].colliders);
+	object player = obj_init(15, 20, go_sprites[0].str, go_sprites[0].x, go_sprites[0].y, go_sprites[0].n_colliders, go_sprites[0].colliders);
 
 	// player functionality
 	int jumped = 0;
@@ -48,7 +48,7 @@ int game_scene() {
 
 		draw_the_object(player);
 
-		object_handler(&go, go_sprites, &player, &alive, &stop, &score);
+		object_handler(&go, &go_sprites, &player, &alive, &stop, &score);
 
 		display_score(score);
 
@@ -59,54 +59,32 @@ int game_scene() {
 }
 
 // Load textures when the game starts
-int set_sprites(raw_sprites * go_sprites) {
+int set_sprites(raw_sprites ** go_sprites) {
 
-	strcpy_s(go_sprites->str, 150, " ### ##### ### ##### ### ");
-	go_sprites->x = 5;
-	go_sprites->y = 5;
-	go_sprites->n_colliders = 1;
-	go_sprites->colliders[0].x1 = 0;
-	go_sprites->colliders[0].y1 = 0;
-	go_sprites->colliders[0].x2 = 4;
-	go_sprites->colliders[0].y2 = 4;
+	FILE * go_file;
+	fopen_s(&go_file, "GO_Elements.txt", "r");
 
-	go_sprites++;
-	strcpy_s(go_sprites->str, 150, " ## #### ## ");
-	go_sprites->x = 4;
-	go_sprites->y = 3;
-	go_sprites->n_colliders = 1;
-	go_sprites->colliders[0].x1 = 0;
-	go_sprites->colliders[0].y1 = 0;
-	go_sprites->colliders[0].x2 = 3;
-	go_sprites->colliders[0].y2 = 2;
+	int nr, len;
+	fscanf_s(go_file, "%d", &nr);
+	*go_sprites = (raw_sprites*)malloc(sizeof(raw_sprites)*nr);
 
-	go_sprites++;
-	strcpy_s(go_sprites->str, 150, "      ###      ##### ##   ### #### ##### ##   ### ");
-	go_sprites->x = 10;
-	go_sprites->y = 5;
-	go_sprites->n_colliders = 2;
-	go_sprites->colliders[0].x1 = 0;
-	go_sprites->colliders[0].y1 = 2;
-	go_sprites->colliders[0].x2 = 3;
-	go_sprites->colliders[0].y2 = 4;
-	go_sprites->colliders[1].x1 = 5;
-	go_sprites->colliders[1].y1 = 0;
-	go_sprites->colliders[1].x2 = 9;
-	go_sprites->colliders[1].y2 = 4;
+	for (int i = 0; i < nr; i++) {
+		fscanf_s(go_file, "%d %d %d ", &(*go_sprites)[i].x, &(*go_sprites)[i].y, &(*go_sprites)[i].n_colliders);
 
-	go_sprites++;
-	strcpy_s(go_sprites->str, 150, "     ##  #   ########## #######  #   #  ");
-	go_sprites->x = 8;
-	go_sprites->y = 5;
-	go_sprites->n_colliders = 2;
-	go_sprites->colliders[0].x1 = 0;
-	go_sprites->colliders[0].y1 = 0;
-	go_sprites->colliders[0].x2 = 7;
-	go_sprites->colliders[0].y2 = 3;
-	go_sprites->colliders[1].x1 = 1;
-	go_sprites->colliders[1].y1 = 4;
-	go_sprites->colliders[1].x2 = 5;
-	go_sprites->colliders[1].y2 = 4;
+		(*go_sprites)[i].colliders = (collider*)malloc(sizeof(collider)*(*go_sprites)[i].n_colliders);
+		for (int j = 0; j < (*go_sprites)[i].n_colliders; j++) {
+			fscanf_s(go_file, "%d %d %d %d ", &(*go_sprites)[i].colliders[j].x1, &(*go_sprites)[i].colliders[j].y1, &(*go_sprites)[i].colliders[j].x2, &(*go_sprites)[i].colliders[j].y2);
+		}
+
+		fscanf_s(go_file, "%d ", &len);
+
+		(*go_sprites)[i].str = (char *)malloc(sizeof(char)*len);
+		fgets((*go_sprites)[i].str, len, go_file);
+		(*go_sprites)[i].str[0] = ' ';
+		fseek(go_file, SEEK_CUR, 1);
+	}
+
+	fclose(go_file);
 
 	return 0;
 }
@@ -178,11 +156,11 @@ int player_handler(int * _jump, int * _hm, int * _y, int * _x, int * _alive, int
 
 // First initialization of game objects
 // (they can't be firstly initialized by the handler
-int first_init_objects(object * _go, raw_sprites go_sprites[]) {
+int first_init_objects(object * _go, raw_sprites ** go_sprites) {
 	for (int i = 0; i < 3; i++) {
-		int _rand = get_random();
+		int _rand = get_random() + 1;
 
-		*(_go + i) = obj_init(45 * (i + 2), 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y, go_sprites[_rand].n_colliders, go_sprites[_rand].colliders);
+		_go[i] = obj_init(45 * (i + 2), 25 - (*go_sprites)[_rand].y, (*go_sprites)[_rand].str, (*go_sprites)[_rand].x, (*go_sprites)[_rand].y, (*go_sprites)[_rand].n_colliders, (*go_sprites)[_rand].colliders);
 	}
 
 	return 0;
@@ -206,7 +184,7 @@ int collision_check(object * _go, object * _player) {
 
 // object handler
 // handles object behavior, reinitialization and collision
-int object_handler(object * _go, raw_sprites go_sprites[], object * _player, int * _alive, int * stop, int * score) {
+int object_handler(object * _go, raw_sprites ** go_sprites, object * _player, int * _alive, int * stop, int * score) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
@@ -222,9 +200,9 @@ int object_handler(object * _go, raw_sprites go_sprites[], object * _player, int
 				*_alive = collision_check(_go, _player);
 		}
 		else if (_go->x <= 2) {
-			_rand = get_random();
+			_rand = get_random() + 1;
 
-			*_go = obj_init(135, 25 - go_sprites[_rand].y, go_sprites[_rand].str, go_sprites[_rand].x, go_sprites[_rand].y, go_sprites[_rand].n_colliders, go_sprites[_rand].colliders);
+			*_go = obj_init(135, 25 - (*go_sprites)[_rand].y, (*go_sprites)[_rand].str, (*go_sprites)[_rand].x, (*go_sprites)[_rand].y, (*go_sprites)[_rand].n_colliders, (*go_sprites)[_rand].colliders);
 
 			*score = *score + 1;
 		}
@@ -237,7 +215,7 @@ int object_handler(object * _go, raw_sprites go_sprites[], object * _player, int
 
 // initializes objects
 // _x,_y are coordinates, _sprite[] is the array wich holds the sprite, _sizeX,_sizeY is sprites size
-object obj_init(int _x, int _y, char _sprite[], int _sizeX, int _sizeY, int _collider_number, collider _colliders[]) {
+object obj_init(int _x, int _y, char * _sprite, int _sizeX, int _sizeY, int _collider_number, collider * _colliders) {
 	object _obj;
 
 	_obj.x = _x;
