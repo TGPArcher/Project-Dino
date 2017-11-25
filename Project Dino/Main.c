@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
-#include <string.h>
 #include <Windows.h>
 #include "g_struct.h"
 
@@ -12,9 +11,7 @@ extern int draw_the_canvas();
 int x, y;
 
 int main() {
-	//set_console_pos(0, 0);
-
-	while (!menu());
+	while (menu());
 
 	return 0;
 }
@@ -27,7 +24,6 @@ int game_scene() {
 	object go[3];
 	first_init_objects(&go, &go_sprites);
 
-	//object player = obj_init(15, 20, go_sprites[0].str, go_sprites[0].x, go_sprites[0].y, go_sprites[0].n_colliders, go_sprites[0].colliders);
 	object player = obj_init(15, 20, &go_sprites[0]);
 	
 	// player functionality
@@ -45,11 +41,11 @@ int game_scene() {
 		Sleep(50);
 		system("cls");
 
-		player_handler(&jumped, &how_many, &player.position, &alive, &stop);
+		player_handler(&jumped, &how_many, &player.position, &alive);
 
 		draw_the_object(&player);
 
-		object_handler(&go, &go_sprites, &player, &alive, &stop, &score);
+		object_handler(&go, &go_sprites, &player, &alive, &score);
 
 		display_score(score);
 
@@ -98,7 +94,7 @@ int get_random() {
 }
 
 // handles player behavior on keyboard input
-int player_handler(int * _jump, int * _hm, pos * _position, int * _alive, int * stop) {
+int player_handler(int * _jump, int * _hm, pos * _position, int * _alive/*int * stop*/) {
 	if (*_jump > 9) {
 		if (*_hm == 0) {
 			_position->y = _position->y - 1;
@@ -134,10 +130,7 @@ int player_handler(int * _jump, int * _hm, pos * _position, int * _alive, int * 
 				*_hm = 0;
 			}
 		}
-		if (_input == 't') {
-			*stop = 1;
-		}
-		if (_input == 'w') {
+		/*if (_input == 'w') {
 			_position->y = _position->y - 1;
 		}
 		if (_input == 's') {
@@ -148,7 +141,7 @@ int player_handler(int * _jump, int * _hm, pos * _position, int * _alive, int * 
 		}
 		if (_input == 'd') {
 			_position->x = _position->x + 1;
-		}
+		}*/
 	}
 
 	return 0;
@@ -184,14 +177,15 @@ int collision_check(object * _go, object * _player) {
 
 // object handler
 // handles object behavior, reinitialization and collision
-int object_handler(object * _go, sprites ** go_sprites, object * _player, int * _alive, int * stop, int * score) {
+int object_handler(object * _go, sprites ** go_sprites, object * _player, int * _alive, /*int * stop*/int * score) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
 
-		if (!*stop) {
 		_go[i].position.x--;
-		}
+		/*if (!*stop) {
+		_go[i].position.x--;
+		}*/
 
 		if (_go[i].position.x > 2 && _go[i].position.x < 92) {
 			draw_the_object(&_go[i]);
@@ -225,13 +219,16 @@ object obj_init(int _x, int _y, sprites * _sprite) {
 
 // Sets the console cursor to (X,Y)
 int set_console_pos(int _x, int _y) {
-	HANDLE cons_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	static HANDLE cons_handle;
+	if(cons_handle == NULL)
+		cons_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	COORD cons_coord;
 	
-	CONSOLE_CURSOR_INFO info;
+	/*CONSOLE_CURSOR_INFO info;
 	info.dwSize = 100;
 	info.bVisible = FALSE;
-	SetConsoleCursorInfo(cons_handle, &info);
+	SetConsoleCursorInfo(cons_handle, &info);*/
 
 	cons_coord.X = _x; cons_coord.Y = _y;
 	x = _x; y = _y;
@@ -244,11 +241,10 @@ int set_console_pos(int _x, int _y) {
 // Draws the object _go to console
 int draw_the_object(object * _go) {
 
-	for (int i = 0; i < _go->sprite.anchors.y; i++) {
+	for (int i = 0, index = 0; i < _go->sprite.anchors.y; i++) {
 		set_console_pos(_go->position.x, _go->position.y + i);
 
-		for (int j = 0; j < _go->sprite.anchors.x; j++) {
-			int index = i * _go->sprite.anchors.x + j;
+		for (int j = 0; j < _go->sprite.anchors.x; index++, j++) {
 
 			if (_go->sprite.str[index] != ' ') {
 				printf("%c", _go->sprite.str[index]);
@@ -258,10 +254,7 @@ int draw_the_object(object * _go) {
 				set_console_pos(x+1, y);
 			}
 		}
-
 	}
-
-	set_console_pos(0, 30);
 
 	return 0;
 }

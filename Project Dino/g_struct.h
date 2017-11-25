@@ -1,5 +1,6 @@
 #pragma once
 
+// point coordinates data
 typedef struct pos {
 	int x, y;
 }pos;
@@ -17,7 +18,7 @@ typedef struct sprites {
 	collider * colliders;
 }sprites;
 
-// Game Object's structure (coord, sprite, spr_coord)
+// Game Object's structure (coord, sprite)
 typedef struct object {
 	pos position;
 	sprites sprite;

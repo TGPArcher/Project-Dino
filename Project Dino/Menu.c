@@ -9,17 +9,17 @@ extern set_console_pos(int, int);
 
 int menu() {
 	UIElements * menu_elements;
-	get_UI_Elements(&menu_elements);
+	int nr_of_elements = get_UI_Elements(&menu_elements);
 
-	int loop = 1, button = 0, stop = 0;
+	int loop = 1, stop = 1, button = 0;
 
 	while (loop) {
-		Sleep(300);
+		Sleep(100);
 		system("cls");
 
 		menu_controls(&loop, &button);
 
-		menu_buttons(button, menu_elements);
+		menu_buttons(button, nr_of_elements, menu_elements);
 
 		draw_the_canvas();
 	}
@@ -28,7 +28,7 @@ int menu() {
 		game_scene();
 	else {
 		system("cls");
-		stop = 1;
+		stop = 0;
 	}
 
 	return stop;
@@ -41,18 +41,16 @@ int menu_controls(int * _loop, int * _button) {
 
 		if (input == 's' || input == 'w')
 			*_button = (*_button + 1) % 2;
-
 		if (input == 13)
 			*_loop = 0;
-
 	}
 
 	return 0;
 }
 
-int menu_buttons(int _button, UIElements * _menu_elements) {
+int menu_buttons(int _button, int _nr, UIElements * _menu_elements) {
 
-	for (int i = 1; i < 10; i++) {
+	for (int i = 1; i < _nr; i++) {
 		set_console_pos(_menu_elements[i].x, _menu_elements[i].y);
 		printf("%s", _menu_elements[i].sprite);
 	}
@@ -66,18 +64,17 @@ int menu_buttons(int _button, UIElements * _menu_elements) {
 // Draws a canvas for the game
 int draw_the_canvas() {
 
+	static int nr_of_elements;
 	static CanvasUIElements * _canvas_elements;
 	if (_canvas_elements == NULL)
-		get_Canvas_Elements(&_canvas_elements);
+		nr_of_elements = get_Canvas_Elements(&_canvas_elements);
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < nr_of_elements; i++) {
 		for (int j = 0; j < _canvas_elements[i].z; j++) {
 			set_console_pos(_canvas_elements[i].x, _canvas_elements[i].y + j);
 			printf("%s", _canvas_elements[i].sprite);
 		}
 	}
-
-	set_console_pos(0, 30);
 
 	return 0;
 }
@@ -102,7 +99,7 @@ int get_UI_Elements(UIElements ** _menu_elements) {
 
 	fclose(menu_file);
 
-	return 0;
+	return nr;
 }
 
 int get_Canvas_Elements(CanvasUIElements ** _canvas_elements) {
@@ -125,5 +122,5 @@ int get_Canvas_Elements(CanvasUIElements ** _canvas_elements) {
 
 	fclose(canvas_file);
 
-	return 0;
+	return nr;
 }
