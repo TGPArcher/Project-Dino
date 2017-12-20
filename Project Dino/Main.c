@@ -4,11 +4,22 @@
 #include <Windows.h>
 #include "g_struct.h"
 
-object obj_init(int, int, sprites*);
 extern int menu();
 extern int draw_the_canvas();
+extern void cls();
+int game_scene();
+int set_sprites(sprites**);
+int get_random();
+int player_handler(int*, int*, pos*, int*);
+int first_init_objects(object*, sprites**);
+int collision_check(object*, object*);
+int object_handler(object*, sprites**, object*, int*, int*);
+object obj_init(int, int, sprites*);
+int set_console_pos(int, int);
+int draw_the_object(object*);
+int display_score(int);
 
-int x, y;
+int x = 0, y = 0;
 
 int main() {
 	while (menu());
@@ -39,7 +50,8 @@ int game_scene() {
 
 	while (alive) {
 		Sleep(50);
-		system("cls");
+		//system("cls");
+		cls();
 
 		player_handler(&jumped, &how_many, &player.position, &alive);
 
@@ -94,7 +106,7 @@ int get_random() {
 }
 
 // handles player behavior on keyboard input
-int player_handler(int * _jump, int * _hm, pos * _position, int * _alive/*int * stop*/) {
+int player_handler(int * _jump, int * _hm, pos * _position, int * _alive) {
 	if (*_jump > 9) {
 		if (*_hm == 0) {
 			_position->y = _position->y - 1;
@@ -130,18 +142,6 @@ int player_handler(int * _jump, int * _hm, pos * _position, int * _alive/*int * 
 				*_hm = 0;
 			}
 		}
-		/*if (_input == 'w') {
-			_position->y = _position->y - 1;
-		}
-		if (_input == 's') {
-			_position->y = _position->y + 1;
-		}
-		if (_input == 'a') {
-			_position->x = _position->x - 1;
-		}
-		if (_input == 'd') {
-			_position->x = _position->x + 1;
-		}*/
 	}
 
 	return 0;
@@ -177,15 +177,12 @@ int collision_check(object * _go, object * _player) {
 
 // object handler
 // handles object behavior, reinitialization and collision
-int object_handler(object * _go, sprites ** go_sprites, object * _player, int * _alive, /*int * stop*/int * score) {
+int object_handler(object * _go, sprites ** go_sprites, object * _player, int * _alive, int * score) {
 	int _rand = 0;
 
 	for (int i = 0; i < 3; i++) {
 
 		_go[i].position.x--;
-		/*if (!*stop) {
-		_go[i].position.x--;
-		}*/
 
 		if (_go[i].position.x > 2 && _go[i].position.x < 92) {
 			draw_the_object(&_go[i]);
@@ -220,17 +217,42 @@ object obj_init(int _x, int _y, sprites * _sprite) {
 // Sets the console cursor to (X,Y)
 int set_console_pos(int _x, int _y) {
 	static HANDLE cons_handle;
-	if(cons_handle == NULL)
+	if (cons_handle == NULL) {
 		cons_handle = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	COORD cons_coord;
-	
-	/*CONSOLE_CURSOR_INFO info;
-	info.dwSize = 100;
-	info.bVisible = FALSE;
-	SetConsoleCursorInfo(cons_handle, &info);*/
+		CONSOLE_CURSOR_INFO info;
+		info.dwSize = 100;
+		info.bVisible = FALSE;
+		SetConsoleCursorInfo(cons_handle, &info);
 
-	cons_coord.X = _x; cons_coord.Y = _y;
+		SetConsoleTitle(L"The Cha Lama");
+
+		SetConsoleTextAttribute(cons_handle, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+
+		COORD coord;
+		SMALL_RECT test;
+
+		coord.X = 100;
+		coord.Y = 25;
+		SetConsoleScreenBufferSize(cons_handle, coord);
+
+		test.Left = 0;
+		test.Top = 0;
+		test.Right = coord.X - 1;
+		test.Bottom = coord.Y - 1;
+
+		SetConsoleWindowInfo(cons_handle, TRUE, &test);
+
+		HWND handler = GetConsoleWindow();
+		HMENU sysMen = GetSystemMenu(handler, FALSE);
+		DeleteMenu(sysMen, SC_CLOSE, MF_BYCOMMAND);
+		DeleteMenu(sysMen, SC_MINIMIZE, MF_BYCOMMAND);
+		DeleteMenu(sysMen, SC_MAXIMIZE, MF_BYCOMMAND);
+		DeleteMenu(sysMen, SC_SIZE, MF_BYCOMMAND);
+	}
+
+	COORD cons_coord;
+	cons_coord.X = _x; cons_coord.Y = _y-1;
 	x = _x; y = _y;
 
 	SetConsoleCursorPosition(cons_handle, cons_coord);

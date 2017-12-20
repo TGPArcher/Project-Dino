@@ -6,6 +6,12 @@
 
 extern int game_scene();
 extern set_console_pos(int, int);
+int menu();
+int menu_controls(int*, int*);
+int menu_buttons(int, int, UIElements*);
+int draw_the_canvas();
+int get_UI_Elements(UIElements**);
+int get_Canvas_Elements(CanvasUIElements**);
 
 int menu() {
 	UIElements * menu_elements;

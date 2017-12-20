@@ -21,6 +21,9 @@
     <ClCompile Include="Menu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Console.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Menu_UI_Elements.txt">

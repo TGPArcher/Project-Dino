@@ -1,9 +1,7 @@
 ﻿  Main.c
-c:\users\tgp\documents\github\project-dino\project dino\main.c(22): warning C4013: 'set_sprites' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\main.c(25): warning C4013: 'first_init_objects' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\main.c(44): warning C4013: 'player_handler' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\main.c(46): warning C4013: 'draw_the_object' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\main.c(48): warning C4013: 'object_handler' undefined; assuming extern returning int
-c:\users\tgp\documents\github\project-dino\project dino\main.c(50): warning C4013: 'display_score' undefined; assuming extern returning int
+c:\users\tgp\documents\github\project-dino\project dino\main.c(36): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
+c:\users\tgp\documents\github\project-dino\project dino\main.c(36): warning C4024: 'first_init_objects': different types for formal and actual parameter 1
+c:\users\tgp\documents\github\project-dino\project dino\main.c(60): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
+c:\users\tgp\documents\github\project-dino\project dino\main.c(60): warning C4024: 'object_handler': different types for formal and actual parameter 1
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)

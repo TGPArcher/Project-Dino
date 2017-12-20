@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Console.c" />
     <ClCompile Include="Main.c" />
     <ClCompile Include="Menu.c" />
   </ItemGroup>
