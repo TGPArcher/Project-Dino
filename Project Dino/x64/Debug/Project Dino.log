@@ -1,7 +1,3 @@
-﻿  Main.c
-c:\users\tgp\documents\github\project-dino\project dino\main.c(36): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
-c:\users\tgp\documents\github\project-dino\project dino\main.c(36): warning C4024: 'first_init_objects': different types for formal and actual parameter 1
-c:\users\tgp\documents\github\project-dino\project dino\main.c(60): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
-c:\users\tgp\documents\github\project-dino\project dino\main.c(60): warning C4024: 'object_handler': different types for formal and actual parameter 1
+﻿  Console.c
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\x64\Debug\Project Dino.pdb (Full PDB)
