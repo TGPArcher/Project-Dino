@@ -1,9 +1,13 @@
 ﻿  Console.c
+  Draw.c
+  Initializations.c
   Game.c
 Game.c(27): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
 Game.c(27): warning C4024: 'first_init_objects': different types for formal and actual parameter 1
 Game.c(54): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
 Game.c(54): warning C4024: 'object_handler': different types for formal and actual parameter 1
+  Main.c
+  Menu.c
   Generating code
   All 33 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code

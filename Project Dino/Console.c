@@ -46,6 +46,9 @@ void set_console_window() {
 	DeleteMenu(sysMen, SC_MINIMIZE, MF_BYCOMMAND);
 	DeleteMenu(sysMen, SC_MAXIMIZE, MF_BYCOMMAND);
 	DeleteMenu(sysMen, SC_SIZE, MF_BYCOMMAND);
+
+	buffer_size.Y++;
+	SetConsoleScreenBufferSize(stdout_handle, buffer_size);
 	
 }
 
@@ -64,7 +67,7 @@ void handler_initialization() {
 void draw() {
 	BUFFER_DATA transport_buffer = {
 		.tmp_buffer_size = {.X = 100,.Y = 25 },
-		.tmp_buffer_start = { 0, 0 },
+		.tmp_buffer_start = { .X = 0, .Y = 0 },
 		.region_to_read = {.Left = 0,.Top = 0,.Right = 99,.Bottom = 24 } };
 
 	read_from_stdout(&transport_buffer);
@@ -109,7 +112,7 @@ void set_cursor_info(int size, int visible) {
 
 // Sets the console cursor to (X,Y)
 void set_console_pos(int x, int y) {
-	COORD cons_coord = { .X = x,.Y = y - 1};
+	COORD cons_coord = { .X = x,.Y = y};
 
 	SetConsoleCursorPosition(stdout_handle, cons_coord);
 }
@@ -118,7 +121,7 @@ void cls() {
 	static int once = 1;
 	static BUFFER_DATA clear_buffer = {
 		.tmp_buffer_size = { .X = 100,.Y = 25 },
-		.tmp_buffer_start = { 0, 0 },
+		.tmp_buffer_start = { .X = 0,.Y = 0 },
 		.region_to_read = { .Left = 0,.Top = 0,.Right = 99,.Bottom = 24 } };
 
 	if (once) {

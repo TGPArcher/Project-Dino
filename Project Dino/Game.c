@@ -26,7 +26,7 @@ void game_scene() {
 	object go[3];
 	first_init_objects(&go, &go_sprites);
 
-	object player = obj_init(15, 20, &go_sprites[0]);
+	object player = obj_init(15, 19, &go_sprites[0]);
 	
 	// player functionality
 	int jumped = 0;
@@ -115,7 +115,7 @@ int first_init_objects(object * _go, sprites ** go_sprites) {
 	for (int i = 0; i < 3; i++) {
 		int _rand = get_random() + 1;
 
-		_go[i] = obj_init(45 * (i + 2), 25 - (*go_sprites)[_rand].anchors.y, &(*go_sprites)[_rand]);
+		_go[i] = obj_init(45 * (i + 2), 24 - (*go_sprites)[_rand].anchors.y, &(*go_sprites)[_rand]);
 	}
 
 	return 0;
@@ -155,7 +155,7 @@ int object_handler(object * _go, sprites ** go_sprites, object * _player, int * 
 		else if (_go[i].position.x <= 2) {
 			_rand = get_random() + 1;
 
-			_go[i] = obj_init(135, 25 - (*go_sprites)[_rand].anchors.y, &(*go_sprites)[_rand]);
+			_go[i] = obj_init(135, 24 - (*go_sprites)[_rand].anchors.y, &(*go_sprites)[_rand]);
 
 			*score = *score + 1;
 		}
