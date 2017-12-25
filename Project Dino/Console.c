@@ -1,6 +1,15 @@
 #include <Windows.h>
 #include "console.h"
 
+extern err_title(int);
+extern err_text_attributes(int);
+extern err_handler(int);
+extern err_window_info(int);
+extern err_buffer_size(int);
+extern err_console_window(int);
+extern err_create_buffer(int);
+extern err_cursor_info(int);
+
 void console_intialization();
 void handler_initialization();
 void set_console_window();
@@ -24,9 +33,11 @@ void console_initializations() {
 
 	set_cursor_info(100, 0);
 
-	SetConsoleTitle(L"The Cha Lama");
+	if ((SetConsoleTitle(L"The Cha Lama")) == 0)
+		err_title(36);
 
-	SetConsoleTextAttribute(stdout_handle, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+	if ((SetConsoleTextAttribute(stdout_handle, FOREGROUND_BLUE | FOREGROUND_INTENSITY)) == 0)
+		err_text_attributes(39);
 
 	cls();
 }
@@ -36,32 +47,41 @@ void set_console_window() {
 	SMALL_RECT window_size = { .Left = 0,.Top = 0,.Right = 99,.Bottom = 24 };
 	COORD buffer_size = { .X = 100,.Y = 25 };
 	for (int i = 0; i < 2; i++) {
-		SetConsoleWindowInfo(screen[i], TRUE, &window_size);
-		SetConsoleScreenBufferSize(screen[i], buffer_size);
+		if ((SetConsoleWindowInfo(screen[i], TRUE, &window_size)) == 0)
+			err_window_info(50);
+		if ((SetConsoleScreenBufferSize(screen[i], buffer_size)) == 0)
+			err_buffer_size(52);
 	}
 
-	HWND handler = GetConsoleWindow();
+	HWND handler;
+	if ((handler = GetConsoleWindow()) == NULL)
+		err_console_window(57);
+
 	HMENU sysMen = GetSystemMenu(handler, FALSE);
+
 	DeleteMenu(sysMen, SC_CLOSE, MF_BYCOMMAND);
 	DeleteMenu(sysMen, SC_MINIMIZE, MF_BYCOMMAND);
 	DeleteMenu(sysMen, SC_MAXIMIZE, MF_BYCOMMAND);
 	DeleteMenu(sysMen, SC_SIZE, MF_BYCOMMAND);
 
 	buffer_size.Y++;
-	SetConsoleScreenBufferSize(stdout_handle, buffer_size);
+	if ((SetConsoleScreenBufferSize(stdout_handle, buffer_size)) == 0)
+		err_buffer_size(64);
 	
 }
 
 void handler_initialization() {
-	stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	if ((stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE)) == INVALID_HANDLE_VALUE)
+		err_handler(73);
 
 	for (int i = 0; i < 2; i++)
-		screen[i] = CreateConsoleScreenBuffer(
+		if ((screen[i] = CreateConsoleScreenBuffer(
 			GENERIC_READ | GENERIC_WRITE,
 			FILE_SHARE_READ | FILE_SHARE_WRITE,
 			NULL,
 			CONSOLE_TEXTMODE_BUFFER,
-			NULL);
+			NULL)) == INVALID_HANDLE_VALUE)
+			err_create_buffer(76);
 }
 
 void draw() {
@@ -106,8 +126,9 @@ void swap() {
 void set_cursor_info(int size, int visible) {
 	CONSOLE_CURSOR_INFO info = { .dwSize = size,.bVisible = visible };
 
-	for(int i = 0; i < 2; i++)
-		SetConsoleCursorInfo(screen[i], &info);
+	for (int i = 0; i < 2; i++)
+		if ((SetConsoleCursorInfo(screen[i], &info)) == 0)
+			err_cursor_info(130);
 }
 
 // Sets the console cursor to (X,Y)

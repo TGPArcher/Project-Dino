@@ -6,6 +6,10 @@ c:\users\tgp\documents\github\project-dino\project dino\game.c(27): warning C402
 c:\users\tgp\documents\github\project-dino\project dino\game.c(54): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
 c:\users\tgp\documents\github\project-dino\project dino\game.c(54): warning C4024: 'object_handler': different types for formal and actual parameter 1
   Initializations.c
+  Error_Handling.c
+c:\users\tgp\documents\github\project-dino\project dino\error_handling.c(66): warning C4473: 'fprintf' : not enough arguments passed for format string
+  c:\users\tgp\documents\github\project-dino\project dino\error_handling.c(66): note: placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+  c:\users\tgp\documents\github\project-dino\project dino\error_handling.c(66): note: the missing variadic argument 1 is required by format string '%d'
   Draw.c
   Console.c
   Generating Code...

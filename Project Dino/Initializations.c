@@ -3,14 +3,19 @@
 #include "c_struct.h"
 #include "g_struct.h"
 
+extern err_memory_alloc(int);
+extern err_file_opening(int);
+
 int get_UI_Elements(UIElements ** _menu_elements) {
 	FILE * menu_file;
-	fopen_s(&menu_file, "Menu_UI_Elements.txt", "r");
+	if ((fopen_s(&menu_file, "Menu_UI_Elements.txt", "r")) != 0)
+		err_file_opening(11);
 
 	int nr;
 	fscanf_s(menu_file, "%d", &nr);
 
-	*_menu_elements = (UIElements*)malloc(sizeof(UIElements) * nr);
+	if ((*_menu_elements = (UIElements*)malloc(sizeof(UIElements) * nr)) == NULL)
+		err_memory_alloc(15);
 
 	for (int i = 0; i < nr; i++) {
 		int element_length;
@@ -35,12 +40,14 @@ int get_UI_Elements(UIElements ** _menu_elements) {
 
 int get_Canvas_Elements(CanvasUIElements ** _canvas_elements) {
 	FILE * canvas_file;
-	fopen_s(&canvas_file, "Canvas_UI_Elements.txt", "r");
+	if ((fopen_s(&canvas_file, "Canvas_UI_Elements.txt", "r")) != 0)
+		err_file_opening(43);
 
 	int nr;
 	fscanf_s(canvas_file, "%d", &nr);
 
-	*_canvas_elements = (CanvasUIElements*)malloc(sizeof(CanvasUIElements) * nr);
+	if ((*_canvas_elements = (CanvasUIElements*)malloc(sizeof(CanvasUIElements) * nr)) == NULL)
+		err_memory_alloc(49);
 
 	for (int i = 0; i < nr; i++) {
 		int element_length;
@@ -68,12 +75,14 @@ int get_Canvas_Elements(CanvasUIElements ** _canvas_elements) {
 void set_sprites(sprites ** go_sprites) {
 
 	FILE * go_file;
-	fopen_s(&go_file, "GO_Elements.txt", "r");
+	if ((fopen_s(&go_file, "GO_Elements.txt", "r")) != 0)
+		err_file_opening(78);
 
 	int nr;
 	fscanf_s(go_file, "%d", &nr);
 
-	*go_sprites = (sprites*)malloc(sizeof(sprites)*nr);
+	if ((*go_sprites = (sprites*)malloc(sizeof(sprites)*nr)) == NULL)
+		err_memory_alloc(84);
 
 	for (int i = 0, sprite_length = 0; i < nr; i++) {
 		fscanf_s(

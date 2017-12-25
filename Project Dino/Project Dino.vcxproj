@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="Console.c" />
     <ClCompile Include="Draw.c" />
+    <ClCompile Include="Error_Handling.c" />
     <ClCompile Include="Initializations.c" />
     <ClCompile Include="Game.c" />
     <ClCompile Include="Main.c" />

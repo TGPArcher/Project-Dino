@@ -1,5 +1,9 @@
 ﻿  Console.c
   Draw.c
+  Error_Handling.c
+Error_Handling.c(66): warning C4473: 'fprintf' : not enough arguments passed for format string
+  Error_Handling.c(66): note: placeholders and their parameters expect 1 variadic arguments, but 0 were provided
+  Error_Handling.c(66): note: the missing variadic argument 1 is required by format string '%d'
   Initializations.c
   Game.c
 Game.c(27): warning C4047: 'function': 'object *' differs in levels of indirection from 'object (*)[3]'
@@ -9,7 +13,7 @@ Game.c(54): warning C4024: 'object_handler': different types for formal and actu
   Main.c
   Menu.c
   Generating code
-  All 33 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 45 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\Release\Project Dino.exe
   Project Dino.vcxproj -> C:\Users\TGP\Documents\GitHub\Project-Dino\Release\Project Dino.pdb (Full PDB)

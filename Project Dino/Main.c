@@ -1,7 +1,10 @@
 extern int menu();
 extern void console_initializations();
+extern void redirect();
 
 int main() {
+
+	redirect();
 
 	console_initializations();
 
